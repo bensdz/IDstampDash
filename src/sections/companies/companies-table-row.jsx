@@ -11,32 +11,29 @@ import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
-import { useRouter } from 'src/routes/hooks';
-
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function UserTableRow({
+export default function CompaniesTableRow({
   selected,
   name,
   avatarUrl,
   company,
+  role,
   isVerified,
   status,
   handleClick,
 }) {
   const [open, setOpen] = useState(null);
+
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
   };
-  const router = useRouter();
+
   const handleCloseMenu = () => {
     setOpen(null);
-  };
-  const handleOpenDetails = () => {
-    router.push(`/user/454`);
   };
 
   return (
@@ -46,21 +43,8 @@ export default function UserTableRow({
           <Checkbox disableRipple checked={selected} onChange={handleClick} />
         </TableCell>
 
-        <TableCell>
-          <Typography
-            onClick={handleOpenDetails} // click to open user details
-          >
-            ID
-          </Typography>
-        </TableCell>
-
         <TableCell component="th" scope="row" padding="none">
-          <Stack
-            direction="row"
-            alignItems="center"
-            spacing={2}
-            onClick={handleOpenDetails} // click to open user details
-          >
+          <Stack direction="row" alignItems="center" spacing={2}>
             <Avatar alt={name} src={avatarUrl} />
             <Typography variant="subtitle2" noWrap>
               {name}
@@ -69,6 +53,8 @@ export default function UserTableRow({
         </TableCell>
 
         <TableCell>{company}</TableCell>
+
+        <TableCell>{role}</TableCell>
 
         <TableCell align="center">{isVerified ? 'Yes' : 'No'}</TableCell>
 
@@ -93,9 +79,9 @@ export default function UserTableRow({
           sx: { width: 140 },
         }}
       >
-        <MenuItem onClick={handleOpenDetails}>
-          <Iconify icon="ep:view" sx={{ mr: 2 }} />
-          View
+        <MenuItem onClick={handleCloseMenu}>
+          <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
+          Edit
         </MenuItem>
 
         <MenuItem onClick={handleCloseMenu} sx={{ color: 'error.main' }}>
@@ -107,12 +93,13 @@ export default function UserTableRow({
   );
 }
 
-UserTableRow.propTypes = {
+CompaniesTableRow.propTypes = {
   avatarUrl: PropTypes.any,
   company: PropTypes.any,
   handleClick: PropTypes.func,
   isVerified: PropTypes.any,
   name: PropTypes.any,
+  role: PropTypes.any,
   selected: PropTypes.any,
   status: PropTypes.string,
 };

@@ -16,15 +16,15 @@ import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 
 import TableNoData from '../table-no-data';
-import UserTableRow from '../user-table-row';
-import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
-import UserTableToolbar from '../user-table-toolbar';
+import CompaniesTableRow from '../companies-table-row';
+import CompaniesTableHead from '../companies-table-head';
+import CompaniesTableToolbar from '../companies-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
 // ----------------------------------------------------------------------
 
-export default function UserPage() {
+export default function CompaniesPage() {
   const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
@@ -72,7 +72,7 @@ export default function UserPage() {
     setSelected(newSelected);
   };
 
-  const handleChangePage = (newPage) => {
+  const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
@@ -97,7 +97,7 @@ export default function UserPage() {
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Users</Typography>
+        <Typography variant="h4">Companies</Typography>
 
         <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
           New User
@@ -105,7 +105,7 @@ export default function UserPage() {
       </Stack>
 
       <Card>
-        <UserTableToolbar
+        <CompaniesTableToolbar
           numSelected={selected.length}
           filterName={filterName}
           onFilterName={handleFilterByName}
@@ -114,7 +114,7 @@ export default function UserPage() {
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
-              <UserTableHead
+              <CompaniesTableHead
                 order={order}
                 orderBy={orderBy}
                 rowCount={users.length}
@@ -122,9 +122,9 @@ export default function UserPage() {
                 onRequestSort={handleSort}
                 onSelectAllClick={handleSelectAllClick}
                 headLabel={[
-                  { id: 'userid', label: 'User ID' },
                   { id: 'name', label: 'Name' },
                   { id: 'company', label: 'Company' },
+                  { id: 'role', label: 'Role' },
                   { id: 'isVerified', label: 'Verified', align: 'center' },
                   { id: 'status', label: 'Status' },
                   { id: '' },
@@ -134,9 +134,10 @@ export default function UserPage() {
                 {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
-                    <UserTableRow
+                    <CompaniesTableRow
                       key={row.id}
                       name={row.name}
+                      role={row.role}
                       status={row.status}
                       company={row.company}
                       avatarUrl={row.avatarUrl}
