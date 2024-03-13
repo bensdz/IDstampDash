@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
+// import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
@@ -20,7 +21,7 @@ import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function LoginView() {
+export default function SignupView() {
   const theme = useTheme();
 
   const router = useRouter();
@@ -33,7 +34,11 @@ export default function LoginView() {
 
   const renderForm = (
     <>
-      <Stack spacing={3}>
+      <Stack spacing={2} sx={{ mb: 2 }}>
+        <TextField name="name" label="Company Name" />
+        <TextField name="address" label="Address" />
+        <TextField name="willaya" label="Willaya" />
+        <TextField name="city" label="City" />
         <TextField name="email" label="Email address" />
 
         <TextField
@@ -52,12 +57,6 @@ export default function LoginView() {
         />
       </Stack>
 
-      <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ my: 3 }}>
-        <Link variant="subtitle2" underline="hover">
-          Forgot password?
-        </Link>
-      </Stack>
-
       <LoadingButton
         fullWidth
         size="large"
@@ -66,7 +65,7 @@ export default function LoginView() {
         color="inherit"
         onClick={handleClick}
       >
-        Login
+        Sign Up
       </LoadingButton>
     </>
   );
@@ -97,12 +96,12 @@ export default function LoginView() {
             maxWidth: 520,
           }}
         >
-          <Typography variant="h4">Sign in</Typography>
+          <Typography variant="h4">Sign Up to IDStamp</Typography>
 
           <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
-            Don’t have an account?
-            <Link variant="subtitle2" sx={{ ml: 0.5 }} onClick={() => router.push('/signup')}>
-              Get started
+            Do you have an account?
+            <Link variant="subtitle2" sx={{ ml: 0.5 }} onClick={() => router.push('/login')}>
+              Get back to login
             </Link>
           </Typography>
 

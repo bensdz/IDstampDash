@@ -122,12 +122,10 @@ export default function CompaniesPage() {
                 onRequestSort={handleSort}
                 onSelectAllClick={handleSelectAllClick}
                 headLabel={[
-                  { id: 'name', label: 'Name' },
-                  { id: 'company', label: 'Company' },
-                  { id: 'role', label: 'Role' },
-                  { id: 'isVerified', label: 'Verified', align: 'center' },
-                  { id: 'status', label: 'Status' },
-                  { id: '' },
+                  { id: 'id', label: 'ID' },
+                  { id: 'name', label: 'Company Name' },
+                  { id: 'address', label: 'Company Address' },
+                  { id: 'users', label: 'Number of users' },
                 ]}
               />
               <TableBody>

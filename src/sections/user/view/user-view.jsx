@@ -1,9 +1,13 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { useState } from 'react';
+import { Modal } from '@material-ui/core';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
+import { LoadingButton } from '@mui/lab';
 import Button from '@mui/material/Button';
+import { Box, TextField } from '@mui/material';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
@@ -36,6 +40,20 @@ export default function UserPage() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 520,
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 4,
+    borderRadius: 2,
+  };
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -99,9 +117,41 @@ export default function UserPage() {
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Users</Typography>
 
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
-          New User
+        <Button
+          variant="contained"
+          color="inherit"
+          startIcon={<Iconify icon="eva:plus-fill" />}
+          onClick={() => setModalOpen(true)}
+        >
+          Verify A New User
         </Button>
+        <Modal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+        >
+          <Box sx={style}>
+            <Typography variant="h5" gutterBottom sx={{ textAlign: 'center' }}>
+              Verify A New User
+            </Typography>
+            <Typography variant="caption" sx={{ textAlign: 'center' }}>
+              Add a new user that you want to verify his identity. The user will be notified by
+              email to complete his verification process.
+            </Typography>
+            <TextField name="email" label="Email address" fullWidth sx={{ my: 3 }} />
+            <LoadingButton
+              fullWidth
+              size="large"
+              type="submit"
+              variant="contained"
+              color="inherit"
+              onClick={() => console.log('clicked')}
+            >
+              Add User
+            </LoadingButton>
+          </Box>
+        </Modal>
       </Stack>
 
       <Card>

@@ -36,7 +36,7 @@ export default function UserTableRow({
     setOpen(null);
   };
   const handleOpenDetails = () => {
-    router.push(`/user/454`);
+    router.push(`/users/454`);
   };
 
   return (

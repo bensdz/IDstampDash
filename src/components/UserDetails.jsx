@@ -5,7 +5,7 @@ function UserDetails() {
     <>
       <Typography variant="h5">User details:</Typography>
       <Grid container sx={{ my: 2 }}>
-        <Grid item xs={6}>
+        <Grid item xs={4}>
           <Typography variant="body1" component="p">
             First name:
           </Typography>
@@ -13,7 +13,7 @@ function UserDetails() {
             Hunt
           </Typography>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={4}>
           <Typography variant="body1" component="p">
             Last name:
           </Typography>
@@ -21,18 +21,7 @@ function UserDetails() {
             David
           </Typography>
         </Grid>
-      </Grid>
-
-      <Grid container sx={{ my: 3 }}>
-        <Grid item xs={6}>
-          <Typography variant="body1" component="p">
-            Phone Number:
-          </Typography>
-          <Typography variant="subtitle1" component="p">
-            +21355554855
-          </Typography>
-        </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={4}>
           <Typography variant="body1" component="p">
             Email
           </Typography>
