@@ -1,10 +1,10 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { useState } from 'react';
-import { Modal } from '@material-ui/core';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
+import Modal from '@mui/material/Modal';
 import { LoadingButton } from '@mui/lab';
 import Button from '@mui/material/Button';
 import { Box, TextField } from '@mui/material';

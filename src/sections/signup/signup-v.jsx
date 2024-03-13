@@ -1,3 +1,5 @@
+/* eslint-disable import/no-extraneous-dependencies */
+// import axios from 'axios';
 import { useState } from 'react';
 
 import Box from '@mui/material/Box';
@@ -28,23 +30,62 @@ export default function SignupView() {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleClick = () => {
-    router.push('/dashboard');
+  const [formState, setFormState] = useState({
+    name: '',
+    address: '',
+    willaya: '',
+    commune: '',
+    email: '',
+    password: '',
+  });
+
+  const handleSubmit = () => {
+    // console.log(formState);
+    /* axios.post('http://localhost:3000/api/companies', formState).then((res) => {
+      console.log(res);
+    }); */
+    // router.push('/dashboard');
   };
 
   const renderForm = (
     <>
       <Stack spacing={2} sx={{ mb: 2 }}>
-        <TextField name="name" label="Company Name" />
-        <TextField name="address" label="Address" />
-        <TextField name="willaya" label="Willaya" />
-        <TextField name="city" label="City" />
-        <TextField name="email" label="Email address" />
-
+        <TextField
+          name="name"
+          label="Company Name"
+          value={formState.name}
+          onChange={(e) => setFormState({ ...formState, name: e.target.value })}
+        />
+        <TextField
+          name="address"
+          label="Address"
+          value={formState.address}
+          onChange={(e) => setFormState({ ...formState, address: e.target.value })}
+        />
+        <TextField
+          name="willaya"
+          label="Willaya"
+          value={formState.willaya}
+          onChange={(e) => setFormState({ ...formState, willaya: e.target.value })}
+        />
+        <TextField
+          name="commune"
+          label="City"
+          value={formState.commune}
+          onChange={(e) => setFormState({ ...formState, commune: e.target.value })}
+        />
+        <TextField
+          name="email"
+          label="Email address"
+          value={formState.email}
+          onChange={(e) => setFormState({ ...formState, email: e.target.value })}
+        />
         <TextField
           name="password"
           label="Password"
           type={showPassword ? 'text' : 'password'}
+          value={formState.password}
+          onChange={(e) => setFormState({ ...formState, password: e.target.value })}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -63,7 +104,7 @@ export default function SignupView() {
         type="submit"
         variant="contained"
         color="inherit"
-        onClick={handleClick}
+        onClick={handleSubmit}
       >
         Sign Up
       </LoadingButton>
