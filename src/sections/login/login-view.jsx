@@ -25,21 +25,32 @@ export default function LoginView() {
 
   const router = useRouter();
 
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClick = () => {
+    console.log('email:', email, 'password:', password);
     router.push('/dashboard');
   };
 
   const renderForm = (
     <>
       <Stack spacing={3}>
-        <TextField name="email" label="Email address" />
+        <TextField
+          name="email"
+          label="Email address"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
 
         <TextField
           name="password"
           label="Password"
           type={showPassword ? 'text' : 'password'}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
