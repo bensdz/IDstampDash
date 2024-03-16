@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -27,6 +28,8 @@ import navConfig from './config-navigation';
 
 export default function Nav({ openNav, onCloseNav }) {
   const pathname = usePathname();
+
+  const userinfo = useAuthUser();
 
   const upLg = useResponsive('up', 'lg');
 
@@ -64,9 +67,12 @@ export default function Nav({ openNav, onCloseNav }) {
 
   const renderMenu = (
     <Stack component="nav" spacing={0.5} sx={{ my: 7, px: 2 }}>
-      {navConfig.map((item) => (
-        <NavItem key={item.title} item={item} />
-      ))}
+      {navConfig.map((item) => {
+        if (item.title === 'Companies' && userinfo.role !== 'admin') {
+          return null;
+        }
+        return <NavItem key={item.title} item={item} />;
+      })}
     </Stack>
   );
 

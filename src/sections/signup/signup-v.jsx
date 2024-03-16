@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-// import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useState } from 'react';
 
 import Box from '@mui/material/Box';
@@ -13,6 +13,7 @@ import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { alpha, useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
+import { Alert } from '@mui/material';
 
 import { useRouter } from 'src/routes/hooks';
 
@@ -20,6 +21,7 @@ import { bgGradient } from 'src/theme/css';
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
+import useSignIn from 'react-auth-kit/hooks/useSignIn';
 
 // ----------------------------------------------------------------------
 
@@ -30,6 +32,10 @@ export default function SignupView() {
 
   const [showPassword, setShowPassword] = useState(false);
 
+  const signIn = useSignIn();
+
+  const [error, setError] = useState(null);
+
   const [formState, setFormState] = useState({
     name: '',
     address: '',
@@ -39,12 +45,34 @@ export default function SignupView() {
     password: '',
   });
 
-  const handleSubmit = () => {
-    // console.log(formState);
-    /* axios.post('http://localhost:3000/api/companies', formState).then((res) => {
-      console.log(res);
-    }); */
-    // router.push('/dashboard');
+  const handleSubmit = async () => {
+    let res;
+    try {
+      res = await axios.post('http://localhost:3000/api/companies', formState).catch((err) => {
+        if (err.response?.status === 400) throw new Error('Company already exists');
+        else if (err.response?.status === 500) throw new Error('Internal Server Error');
+        else throw new Error('Unable to login');
+      });
+      // console.log(res.data);
+      const { token, company, role, auth } = res.data;
+      if (auth) {
+        signIn({
+          auth: {
+            token,
+            expiresIn: 86400,
+            tokenType: 'Bearer',
+          },
+          userState: {
+            role,
+            company,
+          },
+        });
+        router.push('/');
+      }
+    } catch (err) {
+      if (err && err instanceof AxiosError) setError(err.response?.data.message);
+      else if (err && err instanceof Error) setError(err.message);
+    }
   };
 
   const renderForm = (
@@ -108,6 +136,11 @@ export default function SignupView() {
       >
         Sign Up
       </LoadingButton>
+      {error && (
+        <Alert severity="error" sx={{ mt: 2 }}>
+          {error}
+        </Alert>
+      )}
     </>
   );
 

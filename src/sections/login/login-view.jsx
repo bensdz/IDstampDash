@@ -1,8 +1,11 @@
 import { useState } from 'react';
+import axios, { AxiosError } from 'axios';
+import useSignIn from 'react-auth-kit/hooks/useSignIn';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
+import { Alert } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -27,12 +30,39 @@ export default function LoginView() {
 
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+  const [error, setError] = useState(null);
+  const signIn = useSignIn();
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleClick = () => {
-    console.log('email:', email, 'password:', password);
-    router.push('/dashboard');
+  const handleSignIn = async () => {
+    let res;
+    try {
+      res = await axios
+        .post('http://localhost:3000/api/login', { email, password })
+        .catch((err) => {
+          if (err.response?.status === 400) throw new Error('Wrong Email or Password');
+          else if (err.response?.status === 500) throw new Error('Internal Server Error');
+          else throw new Error('Unable to login');
+        });
+      const { token, role, company, auth } = res.data;
+      if (auth) {
+        signIn({
+          auth: {
+            token,
+            expiresIn: 86400,
+            tokenType: 'Bearer',
+          },
+          userState: { role, company },
+        });
+        router.push('/');
+      }
+    } catch (err) {
+      if (err && err instanceof AxiosError) setError(err.response?.data.message);
+      else if (err && err instanceof Error) setError(err.message);
+    }
+
+    // console.log('email:', email, 'password:', password);
   };
 
   const renderForm = (
@@ -75,7 +105,7 @@ export default function LoginView() {
         type="submit"
         variant="contained"
         color="inherit"
-        onClick={handleClick}
+        onClick={handleSignIn}
       >
         Login
       </LoadingButton>
@@ -118,6 +148,11 @@ export default function LoginView() {
           </Typography>
 
           {renderForm}
+          {error && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              {error}
+            </Alert>
+          )}
         </Card>
       </Stack>
     </Box>

@@ -1,4 +1,7 @@
 import { lazy, Suspense } from 'react';
+import AuthOutlet from '@auth-kit/react-router/AuthOutlet';
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
+import RequireAuth from '@auth-kit/react-router/RequireAuth';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 
 import UserInfoPage from 'src/pages/userinfo';
@@ -14,20 +17,41 @@ export const SignUpPage = lazy(() => import('src/pages/signup'));
 // ----------------------------------------------------------------------
 
 export default function Router() {
+  const userinfo = useAuthUser();
   const routes = useRoutes([
     {
       element: (
         <DashboardLayout>
           <Suspense>
-            <Outlet />
+            <AuthOutlet fallbackPath="/login">
+              <Outlet />
+            </AuthOutlet>
           </Suspense>
         </DashboardLayout>
       ),
       children: [
-        { element: <IndexPage />, index: true },
-        { path: 'users', element: <UserPage /> },
-        { path: 'companies', element: <CompaniesPage /> },
-        { path: 'users/:id', element: <UserInfoPage /> },
+        {
+          element: (
+            <RequireAuth fallbackPath="/login">
+              <IndexPage />
+            </RequireAuth>
+          ),
+          index: true,
+        },
+        {
+          path: 'users',
+          element: <UserPage />,
+        },
+        {
+          path: 'companies',
+          element: (
+            <>{userinfo?.role === 'admin' ? <CompaniesPage /> : <Navigate to="/404" replace />}</>
+          ),
+        },
+        {
+          path: 'users/:id',
+          element: <UserInfoPage />,
+        },
       ],
     },
     {

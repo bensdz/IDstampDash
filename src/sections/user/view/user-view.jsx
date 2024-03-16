@@ -90,7 +90,7 @@ export default function UserPage() {
     setSelected(newSelected);
   };
 
-  const handleChangePage = (newPage) => {
+  const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
