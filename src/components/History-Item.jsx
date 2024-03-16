@@ -2,21 +2,27 @@
 /* eslint-disable no-nested-ternary */
 import PropTypes from 'prop-types';
 
-import CancelIcon from '@mui/icons-material/Cancel';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+// import { CancelIcon as CancelIc } from '@mui/icons-material/Cancel';
+// import { CheckCircleIcon as CheckCircleIc } from '@mui/icons-material/CheckCircle';
 import { ListItem, ListItemAvatar, ListItemText } from '@mui/material';
-import ReplayCircleFilledIcon from '@mui/icons-material/ReplayCircleFilled';
+// import { ReplayCircleFilledIcon as ReplayCircleFilledIc } from '@mui/icons-material/ReplayCircleFilled';
+import Iconify from 'src/components/iconify';
 
 function HistoryItem({ status, date }) {
   return (
     <ListItem>
       <ListItemAvatar>
         {status === 'Declined' ? (
-          <CancelIcon fontSize="large" sx={{ color: '#7C0A02' }} />
+          <Iconify icon="zondicons:close-solid" width={35} height={35} color="#D24545" />
         ) : status === 'Accepted' ? (
-          <CheckCircleIcon fontSize="large" sx={{ color: '#006400' }} />
+          <Iconify icon="icon-park-solid:check-one" width={38} height={38} color="#0D9276" />
         ) : (
-          <ReplayCircleFilledIcon fontSize="large" sx={{ color: '#6699CC' }} />
+          <Iconify
+            icon="pepicons-pop:repeat-circle-filled"
+            width={35}
+            height={35}
+            color="#3652AD"
+          />
         )}
       </ListItemAvatar>
       <ListItemText primary={status} secondary={date} />
