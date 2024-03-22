@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import AuthOutlet from '@auth-kit/react-router/AuthOutlet';
+// import AuthOutlet from '@auth-kit/react-router/AuthOutlet';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 import RequireAuth from '@auth-kit/react-router/RequireAuth';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
@@ -23,9 +23,7 @@ export default function Router() {
       element: (
         <DashboardLayout>
           <Suspense>
-            <AuthOutlet fallbackPath="/login">
-              <Outlet />
-            </AuthOutlet>
+            <Outlet />
           </Suspense>
         </DashboardLayout>
       ),
@@ -40,17 +38,27 @@ export default function Router() {
         },
         {
           path: 'users',
-          element: <UserPage />,
+          element: (
+            <RequireAuth fallbackPath="/login">
+              <UserPage />
+            </RequireAuth>
+          ),
         },
         {
           path: 'companies',
           element: (
-            <>{userinfo?.role === 'admin' ? <CompaniesPage /> : <Navigate to="/404" replace />}</>
+            <RequireAuth fallbackPath="/login">
+              {userinfo?.role === 'admin' ? <CompaniesPage /> : <Navigate to="/404" replace />}
+            </RequireAuth>
           ),
         },
         {
           path: 'users/:id',
-          element: <UserInfoPage />,
+          element: (
+            <RequireAuth fallbackPath="/login">
+              <UserInfoPage />
+            </RequireAuth>
+          ),
         },
       ],
     },

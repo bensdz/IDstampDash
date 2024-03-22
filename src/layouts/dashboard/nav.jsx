@@ -68,7 +68,7 @@ export default function Nav({ openNav, onCloseNav }) {
   const renderMenu = (
     <Stack component="nav" spacing={0.5} sx={{ my: 7, px: 2 }}>
       {navConfig.map((item) => {
-        if (item.title === 'Companies' && userinfo.role !== 'admin') {
+        if (userinfo && item.title === 'Companies' && userinfo.role !== 'admin') {
           return null;
         }
         return <NavItem key={item.title} item={item} />;

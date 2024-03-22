@@ -53,7 +53,7 @@ export default function LoginView() {
             expiresIn: 86400,
             tokenType: 'Bearer',
           },
-          userState: { role, company },
+          userState: { role, company, token },
         });
         router.push('/');
       }

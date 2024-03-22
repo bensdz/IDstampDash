@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
@@ -68,12 +69,15 @@ export default function UserTableRow({
           </Stack>
         </TableCell>
 
+        <TableCell>Email@domain.tld</TableCell>
         <TableCell>{company}</TableCell>
 
-        <TableCell align="center">{isVerified ? 'Yes' : 'No'}</TableCell>
-
         <TableCell>
-          <Label color={(status === 'banned' && 'error') || 'success'}>{status}</Label>
+          <Label
+            color={status === 'banned' ? 'error' : status === 'Pending' ? 'default' : 'success'}
+          >
+            {status}
+          </Label>
         </TableCell>
 
         <TableCell align="right">

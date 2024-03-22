@@ -13,6 +13,8 @@ import IconButton from '@mui/material/IconButton';
 import Iconify from 'src/components/iconify';
 
 import { useRouter } from 'src/routes/hooks';
+import { Modal, TextField } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 
 // ----------------------------------------------------------------------
 
@@ -38,7 +40,9 @@ export default function AccountPopover() {
   const signOut = useSignOut();
   const router = useRouter();
 
-  const userinfo = useAuthUser() || {};
+  const compInfo = useAuthUser() || {};
+
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
@@ -52,6 +56,101 @@ export default function AccountPopover() {
     signOut();
     router.push('/login');
   };
+
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 520,
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 4,
+    borderRadius: 2,
+  };
+
+  const renderModal = () => (
+    <Modal
+      open={modalOpen}
+      onClose={() => setModalOpen(false)}
+      aria-labelledby="simple-modal-title"
+      aria-describedby="simple-modal-description"
+    >
+      <Box sx={style}>
+        <Iconify
+          icon="mingcute:close-fill"
+          width={20}
+          height={20}
+          sx={{
+            aligncontent: 'flex-end',
+            cursor: 'pointer',
+            float: 'right',
+            mb: 2,
+          }}
+          onClick={() => setModalOpen(false)}
+        />
+        <Typography variant="h5" gutterBottom sx={{ textAlign: 'center' }}>
+          Profile Information:
+        </Typography>
+        <TextField
+          id="outlined-basic"
+          name="companyName"
+          label="Company Name"
+          variant="outlined"
+          fullWidth
+          sx={{ mt: 3 }}
+          value={compInfo?.company?.companyName}
+        />
+        <TextField
+          id="outlined-basic"
+          name="companyEmail"
+          label="Company Email"
+          variant="outlined"
+          fullWidth
+          sx={{ mt: 3 }}
+          value={compInfo?.company?.companyEmail}
+        />
+        <TextField
+          id="outlined-basic"
+          name="companyAddress"
+          label="Company Address"
+          variant="outlined"
+          fullWidth
+          sx={{ mt: 3 }}
+          value={compInfo?.company?.companyAddress}
+        />
+        <TextField
+          id="outlined-basic"
+          name="companyWillaya"
+          label="Company Willaya"
+          variant="outlined"
+          fullWidth
+          sx={{ mt: 3 }}
+          value={compInfo?.company?.companyWillaya}
+        />
+        <TextField
+          id="outlined-basic"
+          name="companyCommune"
+          label="Company City/Commune"
+          variant="outlined"
+          fullWidth
+          sx={{ mt: 3 }}
+          value={compInfo?.company?.companyCommune}
+        />
+        <LoadingButton
+          fullWidth
+          size="large"
+          type="submit"
+          variant="contained"
+          color="inherit"
+          sx={{ mt: 3 }}
+          onClick={() => console.log('clicked')}
+        >
+          Update Details
+        </LoadingButton>
+      </Box>
+    </Modal>
+  );
 
   return (
     <>
@@ -69,16 +168,16 @@ export default function AccountPopover() {
       >
         <Avatar
           src="/assets/icons/user.png"
-          alt={userinfo?.role === 'admin' ? 'Admin' : userinfo?.company.companyName}
+          alt={compInfo && compInfo?.role === 'admin' ? 'Admin' : compInfo?.company?.companyName}
           sx={{
             width: 36,
             height: 36,
             border: (theme) => `solid 2px ${theme.palette.background.default}`,
           }}
         >
-          {userinfo?.role === 'admin'
+          {compInfo?.role === 'admin'
             ? 'Admin'
-            : userinfo?.company.companyName.charAt(0).toUpperCase()}
+            : compInfo?.company?.companyName.charAt(0).toUpperCase()}
 
           {/* account.displayName.charAt(0).toUpperCase() */}
         </Avatar>
@@ -101,10 +200,10 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2 }}>
           <Typography variant="subtitle2" noWrap>
-            {userinfo?.role === 'admin' ? 'Admin' : userinfo?.company.companyName}
+            {compInfo && compInfo?.role === 'admin' ? 'Admin' : compInfo?.company?.companyName}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {userinfo?.role === 'company' && userinfo?.company.companyEmail}
+            {compInfo && compInfo?.role === 'company' && compInfo?.company.companyEmail}
           </Typography>
         </Box>
 
@@ -120,9 +219,9 @@ export default function AccountPopover() {
           {MENU_OPTIONS[0].label}
         </MenuItem>
 
-        {userinfo?.role === 'admin' ? null : (
+        {compInfo && compInfo?.role === 'admin' ? null : (
           <>
-            <MenuItem key={MENU_OPTIONS[1].label} onClick={handleClose}>
+            <MenuItem key={MENU_OPTIONS[1].label} onClick={() => setModalOpen(true)}>
               <Iconify icon={MENU_OPTIONS[1].icon} width={16} height={16} sx={{ mr: 1 }} />
               {MENU_OPTIONS[1].label}
             </MenuItem>
@@ -133,6 +232,7 @@ export default function AccountPopover() {
             </MenuItem>
           </>
         )}
+        {renderModal()}
 
         <Divider sx={{ borderStyle: 'dashed', m: 0 }} />
 

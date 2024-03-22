@@ -126,6 +126,7 @@ export default function CompaniesPage() {
                   { id: 'name', label: 'Company Name' },
                   { id: 'address', label: 'Address' },
                   { id: 'users', label: 'N° of users' },
+                  { id: '' },
                 ]}
               />
               <TableBody>

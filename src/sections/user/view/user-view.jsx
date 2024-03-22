@@ -1,5 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -18,6 +19,7 @@ import { users } from 'src/_mock/user';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
 import TableNoData from '../table-no-data';
 import UserTableRow from '../user-table-row';
@@ -43,6 +45,10 @@ export default function UserPage() {
 
   const [modalOpen, setModalOpen] = useState(false);
 
+  const [compUsers, setCompUsers] = useState([]);
+
+  const compInfo = useAuthUser() || {};
+
   const style = {
     position: 'absolute',
     top: '50%',
@@ -54,6 +60,30 @@ export default function UserPage() {
     p: 4,
     borderRadius: 2,
   };
+
+  useEffect(() => {
+    axios
+      .post('http://localhost:3000/api/users', {
+        companyId: compInfo?.company?.companyId,
+        companyEmail: compInfo?.company?.companyEmail,
+        token: compInfo?.token,
+        role: compInfo?.role,
+      })
+      .then((res) => {
+        setCompUsers(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [
+    compInfo?.company?.companyEmail,
+    compInfo?.company?.companyId,
+    compInfo.companyId,
+    compInfo?.role,
+    compInfo?.token,
+  ]);
+
+  console.log(compUsers);
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -174,8 +204,8 @@ export default function UserPage() {
                 headLabel={[
                   { id: 'userid', label: 'User ID' },
                   { id: 'name', label: 'Name' },
+                  { id: 'email', label: 'Email' }, // align: 'center'
                   { id: 'company', label: 'Company' },
-                  { id: 'isVerified', label: 'Verified', align: 'center' },
                   { id: 'status', label: 'Status' },
                   { id: '' },
                 ]}
