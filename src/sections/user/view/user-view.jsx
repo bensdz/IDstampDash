@@ -8,18 +8,22 @@ import Table from '@mui/material/Table';
 import Modal from '@mui/material/Modal';
 import { LoadingButton } from '@mui/lab';
 import Button from '@mui/material/Button';
-import { Box, TextField } from '@mui/material';
+import { Alert, Box, TextField } from '@mui/material';
+import { DateField } from '@mui/x-date-pickers/DateField';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 
-import { users } from 'src/_mock/user';
+// import { users } from 'src/_mock/user';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
+import dayjs from 'dayjs';
 
 import TableNoData from '../table-no-data';
 import UserTableRow from '../user-table-row';
@@ -47,7 +51,32 @@ export default function UserPage() {
 
   const [compUsers, setCompUsers] = useState([]);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const compInfo = useAuthUser() || {};
+
+  const [error, setError] = useState(false);
+
+  const [response, setResponse] = useState(null);
+
+  const [formState, setFormState] = useState({
+    fname: '',
+    lname: '',
+    gender: 'M',
+    dob: '01-01-2000',
+    email: '',
+  });
+
+  const genders = [
+    {
+      value: 'M',
+      label: 'Male',
+    },
+    {
+      value: 'F',
+      label: 'Female',
+    },
+  ];
 
   const style = {
     position: 'absolute',
@@ -62,6 +91,35 @@ export default function UserPage() {
   };
 
   useEffect(() => {
+    const fetchUsers = () => {
+      setIsLoading(true);
+      axios
+        .post('http://localhost:3000/api/users', {
+          companyId: compInfo?.company?.companyId,
+          companyEmail: compInfo?.company?.companyEmail,
+          token: compInfo?.token,
+          role: compInfo?.role,
+        })
+        .then((res) => {
+          setCompUsers(res.data);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    };
+
+    fetchUsers();
+  }, [
+    compInfo?.company?.companyId,
+    compInfo?.company?.companyEmail,
+    compInfo?.token,
+    compInfo?.role,
+  ]);
+
+  const fetchUsers = () => {
+    setIsLoading(true);
     axios
       .post('http://localhost:3000/api/users', {
         companyId: compInfo?.company?.companyId,
@@ -71,19 +129,39 @@ export default function UserPage() {
       })
       .then((res) => {
         setCompUsers(res.data);
+        setIsLoading(false);
       })
       .catch((err) => {
         console.log(err);
+        setIsLoading(false);
       });
-  }, [
-    compInfo?.company?.companyEmail,
-    compInfo?.company?.companyId,
-    compInfo.companyId,
-    compInfo?.role,
-    compInfo?.token,
-  ]);
+  };
 
-  console.log(compUsers);
+  const handleDeleteUser = async (userId) => {
+    try {
+      const res = await axios.delete(`http://localhost:3000/api/users/${userId}`, {
+        data: {
+          companyId: compInfo?.company?.companyId,
+          token: compInfo?.token,
+          role: compInfo?.role,
+        },
+      });
+      if (res.status !== 200) {
+        throw new Error(`Failed to delete user with ID ${userId}`);
+      }
+      // Refresh the user list after deletion
+      fetchUsers();
+    } catch (err) {
+      console.error('Failed to delete user:', err);
+    }
+  };
+
+  const handleDeleteSelected = async () => {
+    selected.forEach((userId) => {
+      handleDeleteUser(userId);
+    });
+    setSelected([]);
+  };
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -95,18 +173,18 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = users.map((n) => n.name);
+      const newSelecteds = compUsers.map((n) => n?.userId);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event, userId) => {
+    const selectedIndex = selected.indexOf(userId);
     let newSelected = [];
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, userId);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -134,8 +212,31 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
+  const handleAddUser = async () => {
+    // console.log(formState);
+    console.log({
+      companyId: compInfo?.company?.companyId,
+      token: compInfo?.token,
+      role: compInfo?.role,
+      ...formState,
+    });
+    try {
+      const res = await axios.post('http://localhost:3000/api/users/new', {
+        companyId: compInfo?.company?.companyId,
+        token: compInfo?.token,
+        role: compInfo?.role,
+        ...formState,
+      });
+      setResponse(res.data);
+    } catch (err) {
+      setResponse(null);
+      setError(err.response?.data.message);
+      console.log(err);
+    }
+  };
+
   const dataFiltered = applyFilter({
-    inputData: users,
+    inputData: compUsers,
     comparator: getComparator(order, orderBy),
     filterName,
   });
@@ -169,17 +270,80 @@ export default function UserPage() {
               Add a new user that you want to verify his identity. The user will be notified by
               email to complete his verification process.
             </Typography>
-            <TextField name="email" label="Email address" fullWidth sx={{ my: 3 }} />
+            <TextField
+              name="fname"
+              label="First Name"
+              value={formState.fname}
+              onChange={(e) => setFormState({ ...formState, fname: e.target.value })}
+              fullWidth
+              sx={{ mt: 2 }}
+            />
+            <TextField
+              name="lname"
+              label="Last Name"
+              value={formState.lname}
+              onChange={(e) => setFormState({ ...formState, lname: e.target.value })}
+              fullWidth
+              sx={{ mt: 2 }}
+            />
+            <TextField
+              id="genderselect"
+              select
+              label="Gender"
+              value={formState.gender}
+              onChange={(e) => setFormState({ ...formState, gender: e.target.value })}
+              SelectProps={{
+                native: true,
+              }}
+              fullWidth
+              // helperText="Please select user gender"
+              sx={{ mt: 2 }}
+            >
+              {genders.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </TextField>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DateField
+                label="Date of Birth"
+                value={dayjs(formState.dob)}
+                onChange={(newValue) => setFormState({ ...formState, dob: newValue })}
+                format="DD-MM-YYYY"
+                fullWidth
+                sx={{ mt: 2 }}
+              />
+            </LocalizationProvider>
+
+            <TextField
+              name="email"
+              label="Email address"
+              value={formState.email}
+              onChange={(e) => setFormState({ ...formState, email: e.target.value })}
+              fullWidth
+              sx={{ my: 2 }}
+            />
             <LoadingButton
               fullWidth
               size="large"
               type="submit"
               variant="contained"
               color="inherit"
-              onClick={() => console.log('clicked')}
+              onClick={handleAddUser}
             >
               Add User
             </LoadingButton>
+            {error ? (
+              <Alert severity="error" sx={{ mt: 2 }}>
+                {error}
+              </Alert>
+            ) : null}
+            {response ? (
+              <Alert severity="success" sx={{ mt: 2 }}>
+                User Successfully Added Unique Registration Code: <b>{response.urc}</b>
+              </Alert>
+            ) : null}
           </Box>
         </Modal>
       </Stack>
@@ -189,6 +353,7 @@ export default function UserPage() {
           numSelected={selected.length}
           filterName={filterName}
           onFilterName={handleFilterByName}
+          onDeleteSelected={handleDeleteSelected}
         />
 
         <Scrollbar>
@@ -197,7 +362,7 @@ export default function UserPage() {
               <UserTableHead
                 order={order}
                 orderBy={orderBy}
-                rowCount={users.length}
+                rowCount={compUsers.length}
                 numSelected={selected.length}
                 onRequestSort={handleSort}
                 onSelectAllClick={handleSelectAllClick}
@@ -210,29 +375,37 @@ export default function UserPage() {
                   { id: '' },
                 ]}
               />
-              <TableBody>
-                {dataFiltered
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
-                    <UserTableRow
-                      key={row.id}
-                      name={row.name}
-                      status={row.status}
-                      company={row.company}
-                      avatarUrl={row.avatarUrl}
-                      isVerified={row.isVerified}
-                      selected={selected.indexOf(row.name) !== -1}
-                      handleClick={(event) => handleClick(event, row.name)}
-                    />
-                  ))}
+              {isLoading ? (
+                <p>Loading</p>
+              ) : (
+                <TableBody>
+                  {dataFiltered
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row) => (
+                      <UserTableRow
+                        key={row.userId}
+                        userid={row.userId}
+                        name={`${row.userFirstName} ${row.userLastName}`}
+                        email={row.email}
+                        status={row.status}
+                        companyname={row.company.companyName}
+                        companyId={row.companyId}
+                        // avatarUrl={row.avatarUrl}
+                        // isVerified={row.isVerified}
+                        selected={selected.indexOf(row.userId) !== -1}
+                        handleClick={(event) => handleClick(event, row.userId)}
+                        onDelete={() => handleDeleteUser(row.userId)}
+                      />
+                    ))}
 
-                <TableEmptyRows
-                  height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, users.length)}
-                />
+                  <TableEmptyRows
+                    height={77}
+                    emptyRows={emptyRows(page, rowsPerPage, compUsers.length)}
+                  />
 
-                {notFound && <TableNoData query={filterName} />}
-              </TableBody>
+                  {notFound && <TableNoData query={filterName} />}
+                </TableBody>
+              )}
             </Table>
           </TableContainer>
         </Scrollbar>
@@ -240,7 +413,7 @@ export default function UserPage() {
         <TablePagination
           page={page}
           component="div"
-          count={users.length}
+          count={compUsers.length}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
           rowsPerPageOptions={[5, 10, 25]}

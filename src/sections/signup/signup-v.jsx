@@ -65,6 +65,7 @@ export default function SignupView() {
           userState: {
             role,
             company,
+            token,
           },
         });
         router.push('/');

@@ -48,7 +48,9 @@ export function applyFilter({ inputData, comparator, filterName }) {
 
   if (filterName) {
     inputData = inputData.filter(
-      (user) => user.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+      (user) =>
+        user.userFirstName.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        user.userLastName.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     );
   }
 

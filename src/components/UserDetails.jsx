@@ -1,6 +1,7 @@
 import { Typography, Grid } from '@mui/material';
+import PropTypes from 'prop-types';
 
-function UserDetails() {
+function UserDetails({ userinfo }) {
   return (
     <>
       <Typography variant="h5">User details:</Typography>
@@ -10,7 +11,7 @@ function UserDetails() {
             First name:
           </Typography>
           <Typography variant="subtitle1" component="p">
-            Hunt
+            {userinfo?.userFirstName}
           </Typography>
         </Grid>
         <Grid item xs={4}>
@@ -18,7 +19,7 @@ function UserDetails() {
             Last name:
           </Typography>
           <Typography variant="subtitle1" component="p">
-            David
+            {userinfo?.userLastName}
           </Typography>
         </Grid>
         <Grid item xs={4}>
@@ -26,39 +27,36 @@ function UserDetails() {
             Email
           </Typography>
           <Typography variant="subtitle1" component="p">
-            example@gmail.com
+            {userinfo?.email}
           </Typography>
         </Grid>
       </Grid>
 
       <Grid container sx={{ my: 3 }}>
-        <Grid item xs={4}>
+        <Grid item xs={6}>
           <Typography variant="body1" component="p">
             Date of Birth:
           </Typography>
           <Typography variant="subtitle1" component="p">
-            22/04/2000
+            {userinfo?.userDateOfBirth?.substring(0, 10)}
           </Typography>
         </Grid>
-        <Grid item xs={4}>
+
+        <Grid item xs={6}>
           <Typography variant="body1" component="p">
-            Place of Birth:
+            Gender:
           </Typography>
           <Typography variant="subtitle1" component="p">
-            nowhere
-          </Typography>
-        </Grid>
-        <Grid item xs={4}>
-          <Typography variant="body1" component="p">
-            Sex:
-          </Typography>
-          <Typography variant="subtitle1" component="p">
-            M
+            {userinfo?.userGender === 'M' ? 'Male' : 'Female'}
           </Typography>
         </Grid>
       </Grid>
     </>
   );
 }
+
+UserDetails.propTypes = {
+  userinfo: PropTypes.object,
+};
 
 export default UserDetails;

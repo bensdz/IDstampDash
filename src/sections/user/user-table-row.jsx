@@ -3,7 +3,7 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import Stack from '@mui/material/Stack';
-import Avatar from '@mui/material/Avatar';
+// import Avatar from '@mui/material/Avatar';
 import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
@@ -22,22 +22,32 @@ import Iconify from 'src/components/iconify';
 export default function UserTableRow({
   selected,
   name,
-  avatarUrl,
-  company,
-  isVerified,
+  companyname,
+  companyId,
   status,
   handleClick,
+  email,
+  userid,
+  onDelete,
 }) {
   const [open, setOpen] = useState(null);
+  const router = useRouter();
+
+  const statusColors = {
+    Rejected: 'error',
+    Pending: 'info',
+    Accepted: 'success',
+    default: 'default',
+  };
+
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
   };
-  const router = useRouter();
   const handleCloseMenu = () => {
     setOpen(null);
   };
   const handleOpenDetails = () => {
-    router.push(`/users/454`);
+    router.push(`/users/${userid}`);
   };
 
   return (
@@ -51,7 +61,7 @@ export default function UserTableRow({
           <Typography
             onClick={handleOpenDetails} // click to open user details
           >
-            ID
+            {userid}
           </Typography>
         </TableCell>
 
@@ -62,22 +72,18 @@ export default function UserTableRow({
             spacing={2}
             onClick={handleOpenDetails} // click to open user details
           >
-            <Avatar alt={name} src={avatarUrl} />
+            {/* <Avatar alt={name} src={avatarUrl} /> */}
             <Typography variant="subtitle2" noWrap>
               {name}
             </Typography>
           </Stack>
         </TableCell>
 
-        <TableCell>Email@domain.tld</TableCell>
-        <TableCell>{company}</TableCell>
+        <TableCell>{email}</TableCell>
+        <TableCell>{companyname}</TableCell>
 
         <TableCell>
-          <Label
-            color={status === 'banned' ? 'error' : status === 'Pending' ? 'default' : 'success'}
-          >
-            {status}
-          </Label>
+          <Label color={statusColors[status] || statusColors.default}>{status}</Label>
         </TableCell>
 
         <TableCell align="right">
@@ -102,7 +108,7 @@ export default function UserTableRow({
           View
         </MenuItem>
 
-        <MenuItem onClick={handleCloseMenu} sx={{ color: 'error.main' }}>
+        <MenuItem onClick={onDelete} sx={{ color: 'error.main' }}>
           <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
           Delete
         </MenuItem>
@@ -112,11 +118,13 @@ export default function UserTableRow({
 }
 
 UserTableRow.propTypes = {
-  avatarUrl: PropTypes.any,
-  company: PropTypes.any,
+  companyname: PropTypes.any,
+  companyId: PropTypes.any,
   handleClick: PropTypes.func,
-  isVerified: PropTypes.any,
   name: PropTypes.any,
   selected: PropTypes.any,
   status: PropTypes.string,
+  email: PropTypes.string,
+  userid: PropTypes.any,
+  onDelete: PropTypes.func,
 };

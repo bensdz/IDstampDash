@@ -1,17 +1,37 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Carousel } from 'react-carousel-minimal';
+import PropTypes from 'prop-types';
 
-export function Gallery() {
-  const data = [
-    {
-      image:
-        'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/GoldenGateBridge-001.jpg/1200px-GoldenGateBridge-001.jpg',
-    },
-    {
-      image:
-        'https://cdn.britannica.com/s:800x450,c:crop/35/204435-138-2F2B745A/Time-lapse-hyper-lapse-Isle-Skye-Scotland.jpg',
-    },
-  ];
+export function Gallery({ imgs }) {
+  let data;
+  if (imgs.every((img) => img === undefined)) {
+    data = [
+      {
+        image: '/assets/images/placeholder.png',
+      },
+    ];
+  } else if (imgs[1] === null) {
+    data = [
+      {
+        image: `http://localhost:3000/${String(imgs[0])?.substring(2)}`,
+      },
+      {
+        image: `http://localhost:3000/${String(imgs[2])?.substring(2)}`,
+      },
+    ];
+  } else {
+    data = [
+      {
+        image: `http://localhost:3000/${String(imgs[0])?.substring(2)}`,
+      },
+      {
+        image: `http://localhost:3000/${String(imgs[1])?.substring(2)}`,
+      },
+      {
+        image: `http://localhost:3000/${String(imgs[2])?.substring(2)}`,
+      },
+    ];
+  }
 
   return (
     <Carousel
@@ -37,3 +57,7 @@ export function Gallery() {
     />
   );
 }
+
+Gallery.propTypes = {
+  imgs: PropTypes.array,
+};
