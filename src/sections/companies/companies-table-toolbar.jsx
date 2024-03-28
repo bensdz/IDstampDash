@@ -11,7 +11,12 @@ import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function CompaniesTableToolbar({ numSelected, filterName, onFilterName }) {
+export default function CompaniesTableToolbar({
+  numSelected,
+  filterName,
+  onFilterName,
+  onDeleteSelected,
+}) {
   return (
     <Toolbar
       sx={{
@@ -47,7 +52,7 @@ export default function CompaniesTableToolbar({ numSelected, filterName, onFilte
 
       {numSelected > 0 ? (
         <Tooltip title="Delete">
-          <IconButton>
+          <IconButton onClick={onDeleteSelected}>
             <Iconify icon="eva:trash-2-fill" />
           </IconButton>
         </Tooltip>
@@ -66,4 +71,5 @@ CompaniesTableToolbar.propTypes = {
   numSelected: PropTypes.number,
   filterName: PropTypes.string,
   onFilterName: PropTypes.func,
+  onDeleteSelected: PropTypes.func,
 };

@@ -8,7 +8,7 @@ import Table from '@mui/material/Table';
 import Modal from '@mui/material/Modal';
 import { LoadingButton } from '@mui/lab';
 import Button from '@mui/material/Button';
-import { Alert, Box, TextField } from '@mui/material';
+import { Alert, Box, Skeleton, TextField } from '@mui/material';
 import { DateField } from '@mui/x-date-pickers/DateField';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
@@ -214,12 +214,12 @@ export default function UserPage() {
 
   const handleAddUser = async () => {
     // console.log(formState);
-    console.log({
+    /* console.log({
       companyId: compInfo?.company?.companyId,
       token: compInfo?.token,
       role: compInfo?.role,
       ...formState,
-    });
+    }); */
     try {
       const res = await axios.post('http://localhost:3000/api/users/new', {
         companyId: compInfo?.company?.companyId,
@@ -258,7 +258,10 @@ export default function UserPage() {
         </Button>
         <Modal
           open={modalOpen}
-          onClose={() => setModalOpen(false)}
+          onClose={() => {
+            setModalOpen(false);
+            fetchUsers();
+          }}
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
         >
@@ -358,26 +361,31 @@ export default function UserPage() {
 
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
-            <Table sx={{ minWidth: 800 }}>
-              <UserTableHead
-                order={order}
-                orderBy={orderBy}
-                rowCount={compUsers.length}
-                numSelected={selected.length}
-                onRequestSort={handleSort}
-                onSelectAllClick={handleSelectAllClick}
-                headLabel={[
-                  { id: 'userid', label: 'User ID' },
-                  { id: 'name', label: 'Name' },
-                  { id: 'email', label: 'Email' }, // align: 'center'
-                  { id: 'company', label: 'Company' },
-                  { id: 'status', label: 'Status' },
-                  { id: '' },
-                ]}
-              />
-              {isLoading ? (
-                <p>Loading</p>
-              ) : (
+            {isLoading ? (
+              <Box height="50%" width="100%" sx={{ alignContent: 'center' }}>
+                <Skeleton sx={{ alignContent: 'center' }} />
+                <Skeleton animation="wave" />
+                <Skeleton animation={false} />
+              </Box>
+            ) : (
+              <Table sx={{ minWidth: 800 }}>
+                <UserTableHead
+                  order={order}
+                  orderBy={orderBy}
+                  rowCount={compUsers.length}
+                  numSelected={selected.length}
+                  onRequestSort={handleSort}
+                  onSelectAllClick={handleSelectAllClick}
+                  headLabel={[
+                    { id: 'userId', label: 'User ID' },
+                    { id: 'userFirstName', label: 'Name' },
+                    { id: 'email', label: 'Email' }, // align: 'center'
+                    { id: 'companyname', label: 'Company' },
+                    { id: 'status', label: 'Status' },
+                    { id: '' },
+                  ]}
+                />
+
                 <TableBody>
                   {dataFiltered
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -405,8 +413,8 @@ export default function UserPage() {
 
                   {notFound && <TableNoData query={filterName} />}
                 </TableBody>
-              )}
-            </Table>
+              </Table>
+            )}
           </TableContainer>
         </Scrollbar>
 

@@ -13,8 +13,7 @@ import IconButton from '@mui/material/IconButton';
 import Iconify from 'src/components/iconify';
 
 import { useRouter } from 'src/routes/hooks';
-import { Modal, TextField } from '@mui/material';
-import { LoadingButton } from '@mui/lab';
+import CompanyInfoEdit from 'src/components/CompanyInfoEdit';
 
 // ----------------------------------------------------------------------
 
@@ -56,101 +55,6 @@ export default function AccountPopover() {
     signOut();
     router.push('/login');
   };
-
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 520,
-    bgcolor: 'background.paper',
-    boxShadow: 24,
-    p: 4,
-    borderRadius: 2,
-  };
-
-  const renderModal = () => (
-    <Modal
-      open={modalOpen}
-      onClose={() => setModalOpen(false)}
-      aria-labelledby="simple-modal-title"
-      aria-describedby="simple-modal-description"
-    >
-      <Box sx={style}>
-        <Iconify
-          icon="mingcute:close-fill"
-          width={20}
-          height={20}
-          sx={{
-            aligncontent: 'flex-end',
-            cursor: 'pointer',
-            float: 'right',
-            mb: 2,
-          }}
-          onClick={() => setModalOpen(false)}
-        />
-        <Typography variant="h5" gutterBottom sx={{ textAlign: 'center' }}>
-          Profile Information:
-        </Typography>
-        <TextField
-          id="outlined-basic"
-          name="companyName"
-          label="Company Name"
-          variant="outlined"
-          fullWidth
-          sx={{ mt: 3 }}
-          value={compInfo?.company?.companyName}
-        />
-        <TextField
-          id="outlined-basic"
-          name="companyEmail"
-          label="Company Email"
-          variant="outlined"
-          fullWidth
-          sx={{ mt: 3 }}
-          value={compInfo?.company?.companyEmail}
-        />
-        <TextField
-          id="outlined-basic"
-          name="companyAddress"
-          label="Company Address"
-          variant="outlined"
-          fullWidth
-          sx={{ mt: 3 }}
-          value={compInfo?.company?.companyAddress}
-        />
-        <TextField
-          id="outlined-basic"
-          name="companyWillaya"
-          label="Company Willaya"
-          variant="outlined"
-          fullWidth
-          sx={{ mt: 3 }}
-          value={compInfo?.company?.companyWillaya}
-        />
-        <TextField
-          id="outlined-basic"
-          name="companyCommune"
-          label="Company City/Commune"
-          variant="outlined"
-          fullWidth
-          sx={{ mt: 3 }}
-          value={compInfo?.company?.companyCommune}
-        />
-        <LoadingButton
-          fullWidth
-          size="large"
-          type="submit"
-          variant="contained"
-          color="inherit"
-          sx={{ mt: 3 }}
-          onClick={() => console.log('clicked')}
-        >
-          Update Details
-        </LoadingButton>
-      </Box>
-    </Modal>
-  );
 
   return (
     <>
@@ -232,7 +136,11 @@ export default function AccountPopover() {
             </MenuItem>
           </>
         )}
-        {renderModal()}
+        <CompanyInfoEdit
+          company={compInfo.company}
+          modalOpen={modalOpen}
+          onModalChange={setModalOpen}
+        />
 
         <Divider sx={{ borderStyle: 'dashed', m: 0 }} />
 

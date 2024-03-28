@@ -36,7 +36,8 @@ export default function UserTableRow({
   const statusColors = {
     Rejected: 'error',
     Pending: 'info',
-    Accepted: 'success',
+    Resubmit: 'warning',
+    Verified: 'success',
     default: 'default',
   };
 
@@ -57,21 +58,12 @@ export default function UserTableRow({
           <Checkbox disableRipple checked={selected} onChange={handleClick} />
         </TableCell>
 
-        <TableCell>
-          <Typography
-            onClick={handleOpenDetails} // click to open user details
-          >
-            {userid}
-          </Typography>
+        <TableCell onClick={handleOpenDetails}>
+          <Typography>{userid}</Typography>
         </TableCell>
 
-        <TableCell component="th" scope="row" padding="none">
-          <Stack
-            direction="row"
-            alignItems="center"
-            spacing={2}
-            onClick={handleOpenDetails} // click to open user details
-          >
+        <TableCell component="th" scope="row" padding="none" onClick={handleOpenDetails}>
+          <Stack direction="row" alignItems="center" spacing={2}>
             {/* <Avatar alt={name} src={avatarUrl} /> */}
             <Typography variant="subtitle2" noWrap>
               {name}
@@ -79,7 +71,7 @@ export default function UserTableRow({
           </Stack>
         </TableCell>
 
-        <TableCell>{email}</TableCell>
+        <TableCell onClick={handleOpenDetails}>{email}</TableCell>
         <TableCell>{companyname}</TableCell>
 
         <TableCell>

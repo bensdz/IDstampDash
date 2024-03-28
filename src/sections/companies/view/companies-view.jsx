@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import axios from 'axios';
+import { useCallback, useEffect, useState } from 'react';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -10,8 +11,9 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
-import { users } from 'src/_mock/user';
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
+import { Box, Skeleton } from '@mui/material';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 
@@ -37,6 +39,11 @@ export default function CompaniesPage() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  const admin = useAuthUser() || {};
+  const [comps, setComps] = useState([]);
+
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
     if (id !== '') {
@@ -47,7 +54,7 @@ export default function CompaniesPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = users.map((n) => n.name);
+      const newSelecteds = comps.map((n) => n.companyId);
       setSelected(newSelecteds);
       return;
     }
@@ -86,13 +93,60 @@ export default function CompaniesPage() {
     setFilterName(event.target.value);
   };
 
+  const handleDeleteCompany = async (companyId) => {
+    try {
+      const res = await axios.delete(`http://localhost:3000/api/companies/${companyId}`, {
+        data: {
+          token: admin?.token,
+          role: admin?.role,
+        },
+      });
+      if (res.status !== 200) {
+        throw new Error(`Failed to delete user with ID ${companyId}`);
+      }
+      // Refresh the user list after deletion
+      fetchComps();
+    } catch (err) {
+      console.error('Failed to delete user:', err);
+    }
+  };
+
+  const handleDeleteSelected = async () => {
+    selected.forEach((companyId) => {
+      handleDeleteCompany(companyId);
+    });
+    setSelected([]);
+  };
+
   const dataFiltered = applyFilter({
-    inputData: users,
+    inputData: comps,
     comparator: getComparator(order, orderBy),
     filterName,
   });
 
   const notFound = !dataFiltered.length && !!filterName;
+
+  const fetchComps = useCallback(async () => {
+    setIsLoading(true);
+    axios
+      .post('http://localhost:3000/api/companies', {
+        token: admin?.token,
+        role: admin?.role,
+      })
+      .then((res) => {
+        console.log(res.data);
+        setComps(res.data);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }, [admin?.token, admin?.role]);
+
+  useEffect(() => {
+    fetchComps();
+  }, [fetchComps]);
 
   return (
     <Container>
@@ -109,58 +163,70 @@ export default function CompaniesPage() {
           numSelected={selected.length}
           filterName={filterName}
           onFilterName={handleFilterByName}
+          onDeleteSelected={handleDeleteSelected}
         />
 
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
-            <Table sx={{ minWidth: 800 }}>
-              <CompaniesTableHead
-                order={order}
-                orderBy={orderBy}
-                rowCount={users.length}
-                numSelected={selected.length}
-                onRequestSort={handleSort}
-                onSelectAllClick={handleSelectAllClick}
-                headLabel={[
-                  { id: 'id', label: 'Company ID' },
-                  { id: 'name', label: 'Company Name' },
-                  { id: 'address', label: 'Address' },
-                  { id: 'users', label: 'N° of users' },
-                  { id: '' },
-                ]}
-              />
-              <TableBody>
-                {dataFiltered
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
-                    <CompaniesTableRow
-                      key={row.id}
-                      name={row.name}
-                      role={row.role}
-                      status={row.status}
-                      company={row.company}
-                      avatarUrl={row.avatarUrl}
-                      isVerified={row.isVerified}
-                      selected={selected.indexOf(row.name) !== -1}
-                      handleClick={(event) => handleClick(event, row.name)}
-                    />
-                  ))}
-
-                <TableEmptyRows
-                  height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, users.length)}
+            {isLoading ? (
+              <Box height="50%" width="100%" sx={{ alignContent: 'center' }}>
+                <Skeleton sx={{ alignContent: 'center' }} />
+                <Skeleton animation="wave" />
+                <Skeleton animation={false} />
+              </Box>
+            ) : (
+              <Table sx={{ minWidth: 800 }}>
+                <CompaniesTableHead
+                  order={order}
+                  orderBy={orderBy}
+                  rowCount={comps.length}
+                  numSelected={selected.length}
+                  onRequestSort={handleSort}
+                  onSelectAllClick={handleSelectAllClick}
+                  headLabel={[
+                    { id: 'companyId', label: 'Company ID' },
+                    { id: 'companyName', label: 'Company Name' },
+                    { id: 'companyEmail', label: 'Email' },
+                    { id: 'address', label: 'Address' },
+                    { id: 'users', label: 'N° of users' },
+                    { id: '' },
+                  ]}
                 />
+                <TableBody>
+                  {dataFiltered
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row) => (
+                      <CompaniesTableRow
+                        key={row.companyId}
+                        companyId={row.companyId}
+                        name={row.companyName}
+                        email={row.companyEmail}
+                        address={row.companyAddress}
+                        commune={row.companyCommune}
+                        willaya={row.companyWillaya}
+                        userCount={row.users.length}
+                        selected={selected.indexOf(row.companyId) !== -1}
+                        handleClick={(event) => handleClick(event, row.companyId)}
+                        onDelete={() => handleDeleteCompany(row.companyId)}
+                      />
+                    ))}
 
-                {notFound && <TableNoData query={filterName} />}
-              </TableBody>
-            </Table>
+                  <TableEmptyRows
+                    height={77}
+                    emptyRows={emptyRows(page, rowsPerPage, comps.length)}
+                  />
+
+                  {notFound && <TableNoData query={filterName} />}
+                </TableBody>
+              </Table>
+            )}
           </TableContainer>
         </Scrollbar>
 
         <TablePagination
           page={page}
           component="div"
-          count={users.length}
+          count={comps.length}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
           rowsPerPageOptions={[5, 10, 25]}

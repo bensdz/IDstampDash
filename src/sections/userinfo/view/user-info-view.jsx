@@ -6,10 +6,13 @@ import {
   Button,
   Card,
   CardContent,
+  CircularProgress,
   Container,
   Divider,
   Grid,
   List,
+  Modal,
+  TextField,
   Typography,
 } from '@mui/material';
 
@@ -22,8 +25,9 @@ import DocumentDetails from 'src/components/DocumentDetails';
 import FraudDetails from 'src/components/FraudDetails';
 import { useParams } from 'react-router-dom';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
+import { LoadingButton } from '@mui/lab';
 
 function UserInfo() {
   const router = useRouter();
@@ -34,7 +38,23 @@ function UserInfo() {
   const userid = useParams()?.id;
   const comp = useAuthUser();
 
-  useEffect(() => {
+  const [reviewStatus, setReviewStatus] = useState('');
+  const [note, setNote] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 520,
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 4,
+    borderRadius: 2,
+  };
+
+  const fetchUserDetails = useCallback(() => {
     setIsLoading(true);
     axios
       .post(`http://localhost:3000/api/users/details/${userid}`, {
@@ -48,7 +68,11 @@ function UserInfo() {
         console.log(err);
         setIsLoading(false);
       });
-  }, [comp?.token, userid]);
+  }, [userid, comp?.token]);
+
+  useEffect(() => {
+    fetchUserDetails();
+  }, [fetchUserDetails]);
 
   const { submissions, ...userinfo } = info;
 
@@ -56,19 +80,21 @@ function UserInfo() {
     submissions &&
     submissions.slice().sort((a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted))[0];
 
-  console.log(latestSubmission);
-
-  const handleRejectId = () => {
-    // Implement reject Id functionality here
-  };
-
-  // eslint-disable-next-line no-unused-vars
-  const handleAskToReupload = () => {
-    // Implement ask to reupload selfie functionality here
-  };
-
-  const handleApprove = () => {
-    // Implement approve functionality here
+  const handleSetStatus = async (newStatus) => {
+    try {
+      await axios.post(`http://localhost:3000/api/users/update`, {
+        token: comp?.token,
+        role: comp?.role,
+        submissionId: latestSubmission?.submissionId,
+        userId: latestSubmission?.userId,
+        status: newStatus,
+        note,
+      });
+      // console.log(res.data);
+      fetchUserDetails();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -76,13 +102,15 @@ function UserInfo() {
       <Box sx={{ display: 'flex', my: 1 }}>
         <Button onClick={() => router.back()}>⬅ Back</Button>{' '}
       </Box>
-      <Card sx={{ minHeight: '75%' }}>
+      <Card>
         {isLoading ? (
-          'Loading...'
+          <Box display="flex" justifyContent="center" alignItems="center" minHeight="75vh">
+            <CircularProgress color="inherit" />
+          </Box>
         ) : (
           <CardContent sx={{ my: 2, mx: 2 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} sx={{ my: 3 }}>
+              <Grid item xs={12} sm={6}>
                 <UserDetails userinfo={userinfo} />
 
                 <Divider sx={{ my: 2 }} variant="middle" />
@@ -99,8 +127,12 @@ function UserInfo() {
                   <Button
                     sx={{ my: 2, mx: 1 }}
                     variant="outlined"
+                    disabled={info?.status === 'New' || info?.status === 'Resubmit'}
                     // color="common"
-                    onClick={handleApprove}
+                    onClick={() => {
+                      setReviewStatus('Resubmit');
+                      setModalOpen(true);
+                    }}
                   >
                     Ask to resubmit
                   </Button>
@@ -108,7 +140,15 @@ function UserInfo() {
                     sx={{ my: 2, mx: 1 }}
                     variant="outlined"
                     color="error"
-                    onClick={handleRejectId}
+                    disabled={
+                      info?.status === 'New' ||
+                      info?.status === 'Rejected' ||
+                      info?.status === 'Resubmit'
+                    }
+                    onClick={() => {
+                      setReviewStatus('Rejected');
+                      setModalOpen(true);
+                    }}
                   >
                     Reject
                   </Button>
@@ -116,11 +156,51 @@ function UserInfo() {
                     sx={{ my: 2, mx: 1 }}
                     variant="contained"
                     color="success"
-                    onClick={handleApprove}
+                    disabled={
+                      info?.status === 'New' ||
+                      info?.status === 'Verified' ||
+                      info?.status === 'Resubmit'
+                    }
+                    onClick={() => {
+                      setReviewStatus('Verified');
+                      setModalOpen(true);
+                    }}
                   >
                     Approve
                   </Button>
                 </Box>
+                <Modal
+                  open={modalOpen}
+                  onClose={() => setModalOpen(false)}
+                  aria-labelledby="simple-modal-title"
+                  aria-describedby="simple-modal-description"
+                >
+                  <Box sx={style}>
+                    <Typography variant="h6">
+                      Optional: Add a note for your decision ({reviewStatus})
+                    </Typography>
+                    <TextField
+                      value={note}
+                      label="Enter here a note for the user"
+                      onChange={(e) => setNote(e.target.value)}
+                      fullWidth
+                      sx={{ my: 2 }}
+                    />
+                    <LoadingButton
+                      fullWidth
+                      size="large"
+                      type="submit"
+                      variant="contained"
+                      color="inherit"
+                      onClick={() => {
+                        setModalOpen(false);
+                        handleSetStatus(reviewStatus);
+                      }}
+                    >
+                      Confirm
+                    </LoadingButton>
+                  </Box>
+                </Modal>
                 <Container>
                   <Gallery
                     imgs={[
@@ -134,12 +214,22 @@ function UserInfo() {
             </Grid>
 
             <Box>
-              <Typography variant="h5">History</Typography>
-              <List>
-                <HistoryItem status="Declined" date="Jan 9, 2024" />
-                <HistoryItem status="Accepted" date="Jan 31, 2024" />
-                <HistoryItem status="Resubmit" date="Jan 31, 2024" />
-              </List>
+              <Typography variant="h5">Submissions History:</Typography>
+              {submissions?.length === 0 ? (
+                <Typography variant="body1" component="p" sx={{ my: 2 }}>
+                  No data found
+                </Typography>
+              ) : (
+                <List>
+                  {submissions?.map((sub) => (
+                    <HistoryItem
+                      key={sub?.submissionId}
+                      submission={sub}
+                      current={sub?.submissionId === latestSubmission?.submissionId}
+                    />
+                  ))}
+                </List>
+              )}
             </Box>
           </CardContent>
         )}

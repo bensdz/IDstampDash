@@ -2,7 +2,6 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import Stack from '@mui/material/Stack';
-import Avatar from '@mui/material/Avatar';
 import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
@@ -13,20 +12,25 @@ import IconButton from '@mui/material/IconButton';
 
 // import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
+import CompanyInfoEdit from 'src/components/CompanyInfoEdit';
 
 // ----------------------------------------------------------------------
 
 export default function CompaniesTableRow({
-  selected,
+  companyId,
   name,
-  avatarUrl,
-  company,
-  role,
-  isVerified,
-  status,
+  email,
+  address,
+  willaya,
+  commune,
+  userCount,
+  selected,
   handleClick,
+  onDelete,
 }) {
   const [open, setOpen] = useState(null);
+
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
@@ -43,19 +47,21 @@ export default function CompaniesTableRow({
           <Checkbox disableRipple checked={selected} onChange={handleClick} />
         </TableCell>
 
-        <TableCell>this is ID</TableCell>
+        <TableCell>{companyId}</TableCell>
         <TableCell component="th" scope="row" padding="none">
           <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar alt={name} src={avatarUrl} />
+            {/* <Avatar alt={name} src={avatarUrl} />  */}
             <Typography variant="subtitle2" noWrap>
               {name}
             </Typography>
           </Stack>
         </TableCell>
 
-        <TableCell>address field</TableCell>
+        <TableCell>{email}</TableCell>
 
-        <TableCell>1515 User</TableCell>
+        <TableCell>{`${address}, ${commune}, ${willaya}`}</TableCell>
+
+        <TableCell>{userCount}</TableCell>
 
         {/* <TableCell align="center">{isVerified ? 'Yes' : 'No'}</TableCell>
 
@@ -81,27 +87,41 @@ export default function CompaniesTableRow({
           sx: { width: 140 },
         }}
       >
-        <MenuItem onClick={handleCloseMenu}>
+        <MenuItem onClick={() => setModalOpen(true)}>
           <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
           Edit
         </MenuItem>
 
-        <MenuItem onClick={handleCloseMenu} sx={{ color: 'error.main' }}>
+        <MenuItem onClick={onDelete} sx={{ color: 'error.main' }}>
           <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
           Delete
         </MenuItem>
       </Popover>
+      <CompanyInfoEdit
+        company={{
+          companyId,
+          companyName: name,
+          companyEmail: email,
+          companyAddress: address,
+          companyWillaya: willaya,
+          companyCommune: commune,
+        }}
+        modalOpen={modalOpen}
+        onModalChange={setModalOpen}
+      />
     </>
   );
 }
 
 CompaniesTableRow.propTypes = {
-  avatarUrl: PropTypes.any,
-  company: PropTypes.any,
+  companyId: PropTypes.any,
+  name: PropTypes.string,
+  email: PropTypes.string,
+  address: PropTypes.string,
+  willaya: PropTypes.string,
+  commune: PropTypes.string,
+  userCount: PropTypes.number,
+  selected: PropTypes.bool,
   handleClick: PropTypes.func,
-  isVerified: PropTypes.any,
-  name: PropTypes.any,
-  role: PropTypes.any,
-  selected: PropTypes.any,
-  status: PropTypes.string,
+  onDelete: PropTypes.func,
 };

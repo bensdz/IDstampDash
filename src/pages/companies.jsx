@@ -8,7 +8,7 @@ export default function CompaniesPage() {
   return (
     <>
       <Helmet>
-        <title> Coompanies </title>
+        <title> Companies </title>
       </Helmet>
 
       <CompaniesView />

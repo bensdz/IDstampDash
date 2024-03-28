@@ -1,9 +1,20 @@
 import { Typography, Grid } from '@mui/material';
 import PropTypes from 'prop-types';
+import Label from './label';
 
 function UserDetails({ userinfo }) {
+  const statusColors = {
+    Rejected: 'error',
+    Pending: 'info',
+    Resubmit: 'warning',
+    Verified: 'success',
+    default: 'default',
+  };
   return (
     <>
+      <Label color={statusColors[userinfo?.status] || statusColors.default} sx={{ my: 2 }}>
+        {userinfo?.status}
+      </Label>
       <Typography variant="h5">User details:</Typography>
       <Grid container sx={{ my: 2 }}>
         <Grid item xs={4}>
