@@ -27,6 +27,7 @@ export default function CompaniesTableRow({
   selected,
   handleClick,
   onDelete,
+  onFetchComp,
 }) {
   const [open, setOpen] = useState(null);
 
@@ -107,7 +108,10 @@ export default function CompaniesTableRow({
           companyCommune: commune,
         }}
         modalOpen={modalOpen}
-        onModalChange={setModalOpen}
+        onModalChange={() => {
+          setModalOpen(!modalOpen);
+          onFetchComp();
+        }}
       />
     </>
   );
@@ -124,4 +128,5 @@ CompaniesTableRow.propTypes = {
   selected: PropTypes.bool,
   handleClick: PropTypes.func,
   onDelete: PropTypes.func,
+  onFetchComp: PropTypes.func,
 };

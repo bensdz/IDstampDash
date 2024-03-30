@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useSignOut from 'react-auth-kit/hooks/useSignOut';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
@@ -14,6 +14,8 @@ import Iconify from 'src/components/iconify';
 
 import { useRouter } from 'src/routes/hooks';
 import CompanyInfoEdit from 'src/components/CompanyInfoEdit';
+import ApiInfo from 'src/components/ApiInfo';
+import axios from 'axios';
 
 // ----------------------------------------------------------------------
 
@@ -42,6 +44,19 @@ export default function AccountPopover() {
   const compInfo = useAuthUser() || {};
 
   const [modalOpen, setModalOpen] = useState(false);
+  const [modal, setModal] = useState(false);
+
+  const [apikey, setApiKey] = useState('');
+
+  useEffect(() => {
+    axios
+      .post(`http://localhost:3000/api/key/${compInfo?.company?.companyId}`, {
+        token: compInfo?.token,
+      })
+      .then((res) => {
+        setApiKey(res.data.key);
+      });
+  }, [compInfo?.company?.companyId, compInfo.companyId, compInfo?.token]);
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
@@ -130,7 +145,7 @@ export default function AccountPopover() {
               {MENU_OPTIONS[1].label}
             </MenuItem>
 
-            <MenuItem key={MENU_OPTIONS[2].label} onClick={handleClose}>
+            <MenuItem key={MENU_OPTIONS[2].label} onClick={() => setModal(true)}>
               <Iconify icon={MENU_OPTIONS[2].icon} width={16} height={16} sx={{ mr: 1 }} />
               {MENU_OPTIONS[2].label}
             </MenuItem>
@@ -153,6 +168,15 @@ export default function AccountPopover() {
           <Iconify icon="eva:log-out-fill" width={16} height={16} sx={{ mr: 1 }} />
           Logout
         </MenuItem>
+        <ApiInfo
+          modal={modal}
+          onModalChange={setModal}
+          api={[
+            'http://localhost:3000/api/endpoint/users',
+            'http://localhost:3000/api/key/:companyid',
+          ]}
+          apikey={apikey}
+        />
       </Popover>
     </>
   );

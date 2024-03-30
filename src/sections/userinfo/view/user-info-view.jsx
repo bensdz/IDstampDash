@@ -59,6 +59,8 @@ function UserInfo() {
     axios
       .post(`http://localhost:3000/api/users/details/${userid}`, {
         token: comp?.token,
+        role: comp?.role,
+        companyId: comp?.company?.companyId,
       })
       .then((res) => {
         setInfo(res.data);
@@ -68,7 +70,7 @@ function UserInfo() {
         console.log(err);
         setIsLoading(false);
       });
-  }, [userid, comp?.token]);
+  }, [userid, comp?.token, comp?.role, comp?.company?.companyId]);
 
   useEffect(() => {
     fetchUserDetails();
@@ -89,6 +91,7 @@ function UserInfo() {
         userId: latestSubmission?.userId,
         status: newStatus,
         note,
+        companyId: comp?.company?.companyId,
       });
       // console.log(res.data);
       fetchUserDetails();

@@ -62,6 +62,32 @@ function FraudDetails({ verif }) {
               </Typography>
             </Grid>
           </Grid>
+          <Grid container sx={{ my: 3 }}>
+            <Grid item xs={4}>
+              <Typography variant="body1" component="p">
+                Gender Match:
+              </Typography>
+              <Typography variant="subtitle1" component="p">
+                {verif?.compareGender ? 'Yes' : 'No'}
+              </Typography>
+            </Grid>
+            <Grid item xs={4}>
+              <Typography variant="body1" component="p">
+                Document Check:
+              </Typography>
+              <Typography variant="subtitle1" component="p">
+                Clean
+              </Typography>
+            </Grid>
+            <Grid item xs={4}>
+              <Typography variant="body1" component="p">
+                Document Verification:
+              </Typography>
+              <Typography variant="subtitle1" component="p">
+                Verified
+              </Typography>
+            </Grid>
+          </Grid>
         </>
       ) : (
         <Typography variant="body1" component="p" sx={{ my: 2 }}>

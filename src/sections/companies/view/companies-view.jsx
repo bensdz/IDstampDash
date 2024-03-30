@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from 'react';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
-import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
@@ -14,7 +13,6 @@ import TablePagination from '@mui/material/TablePagination';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
 import { Box, Skeleton } from '@mui/material';
-import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 
 import TableNoData from '../table-no-data';
@@ -134,7 +132,7 @@ export default function CompaniesPage() {
         role: admin?.role,
       })
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setComps(res.data);
         setIsLoading(false);
       })
@@ -153,9 +151,9 @@ export default function CompaniesPage() {
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Companies</Typography>
 
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
+        {/* <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
           New User
-        </Button>
+  </Button> */}
       </Stack>
 
       <Card>
@@ -208,6 +206,7 @@ export default function CompaniesPage() {
                         selected={selected.indexOf(row.companyId) !== -1}
                         handleClick={(event) => handleClick(event, row.companyId)}
                         onDelete={() => handleDeleteCompany(row.companyId)}
+                        onFetchComp={() => fetchComps()}
                       />
                     ))}
 
