@@ -114,7 +114,15 @@ function UserInfo() {
           <CardContent sx={{ my: 2, mx: 2 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
-                <UserDetails userinfo={userinfo} />
+                <UserDetails
+                  userinfo={userinfo}
+                  fraudScore={latestSubmission?.verif?.fraudIndex}
+                  docinfo={{
+                    firstname: latestSubmission?.document?.firstname,
+                    lastname: latestSubmission?.document?.lastname,
+                    dateOfBirth: latestSubmission?.document?.dateOfBirth?.substring(0, 10),
+                  }}
+                />
 
                 <Divider sx={{ my: 2 }} variant="middle" />
 

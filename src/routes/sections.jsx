@@ -6,6 +6,7 @@ import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 
 import UserInfoPage from 'src/pages/userinfo';
 import DashboardLayout from 'src/layouts/dashboard';
+import Documentation from 'src/pages/Documentation';
 
 export const IndexPage = lazy(() => import('src/pages/app'));
 export const UserPage = lazy(() => import('src/pages/user'));
@@ -77,6 +78,10 @@ export default function Router() {
     {
       path: 'signup',
       element: <SignUpPage />,
+    },
+    {
+      path: 'docs',
+      element: <Documentation />,
     },
   ]);
 

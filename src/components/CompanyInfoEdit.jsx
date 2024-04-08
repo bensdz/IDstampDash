@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
+import { willayas } from 'src/utils/willayas';
 import { LoadingButton } from '@mui/lab';
-import { Alert, Box, Modal, TextField, Typography } from '@mui/material';
+import { Alert, Box, MenuItem, Modal, TextField, Typography } from '@mui/material';
 import Iconify from './iconify';
 
 function CompanyInfoEdit({ company, modalOpen, onModalChange }) {
@@ -129,7 +130,13 @@ function CompanyInfoEdit({ company, modalOpen, onModalChange }) {
           sx={{ mt: 3 }}
           value={formState.companyWillaya}
           onChange={(e) => setFormState({ ...formState, companyWillaya: e.target.value })}
-        />
+        >
+          {willayas.map((willaya) => (
+            <MenuItem key={willaya.id} value={willaya.name}>
+              {willaya.name}
+            </MenuItem>
+          ))}
+        </TextField>
         <TextField
           id="outlined-basic"
           name="companyCommune"

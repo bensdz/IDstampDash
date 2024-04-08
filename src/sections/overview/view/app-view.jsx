@@ -1,4 +1,7 @@
 // import { faker } from '@faker-js/faker';
+import axios from 'axios';
+import { useCallback, useEffect, useState } from 'react';
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -19,86 +22,181 @@ import AppWidgetSummary from '../app-widget-summary';
 // ----------------------------------------------------------------------
 
 export default function AppView() {
+  const comp = useAuthUser();
+  const [comps, setComps] = useState([]);
+  const [months, setMonths] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+
+  const [userCount, setUserCount] = useState({
+    total: 0,
+    verified: 0,
+    rejected: 0,
+    pending: 0,
+    resubmit: 0,
+    New: 0,
+  });
+
+  function getLastYearMonths() {
+    const dates = [];
+    const date = new Date();
+    date.setMonth(date.getMonth() - 12);
+
+    for (let i = 0; i < 12; i += 1) {
+      date.setMonth(date.getMonth() + 1);
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      dates.push(`${month}/01/${year}`);
+    }
+
+    return dates;
+  }
+
+  const fetchCategories = useCallback(async () => {
+    axios
+      .post('http://localhost:3000/api/users/count', {
+        token: comp?.token,
+        companyId: comp?.company?.companyId,
+        role: comp?.role,
+      })
+      .then((response) => {
+        setUserCount(response.data);
+        // console.log(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [comp]);
+
+  const fetchComps = useCallback(async () => {
+    axios
+      .post('http://localhost:3000/api/companies', {
+        token: comp?.token,
+        role: comp?.role,
+      })
+      .then((res) => {
+        setComps(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [comp?.token, comp?.role]);
+
+  const getCountPerMonthLastYear = useCallback(async () => {
+    // Get the current date and subtract 1 year
+    const oneYearAgo = new Date();
+    oneYearAgo.setMonth(oneYearAgo.getMonth() - 11);
+    oneYearAgo.setDate(1);
+
+    try {
+      const response = await axios.post('http://localhost:3000/api/submissions/monthly', {
+        token: comp?.token,
+        companyId: comp?.company?.companyId,
+        role: comp?.role,
+      });
+
+      // Filter the submissions to only include those from the last year
+      const lastYearSubmissions = response.data.filter((submission) => {
+        const submissionDate = new Date(submission.dateSubmitted);
+        return submissionDate >= oneYearAgo;
+      });
+
+      // Initialize an array of 12 zeros
+      const counts = Array(12).fill(0);
+
+      // Count the submissions by month
+      lastYearSubmissions.forEach((submission) => {
+        const month = new Date(submission.dateSubmitted).getMonth(); // getMonth returns a zero-based month (0-11)
+        const diffMonth = (new Date().getMonth() - month + 12) % 12; // calculate the difference in months
+        counts[diffMonth] += 1;
+      });
+
+      // console.log(counts);
+      counts.reverse();
+      return counts;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }, [comp]);
+
+  useEffect(() => {
+    fetchCategories();
+    getCountPerMonthLastYear().then(setMonths);
+    if (comp?.role !== 'company') {
+      fetchComps();
+    }
+  }, [comp?.role, fetchCategories, fetchComps, getCountPerMonthLastYear]);
+
   return (
     <Container maxWidth="xl">
       <Typography variant="h4" sx={{ mb: 5 }}>
-        Hi, Welcome back 👋
+        Welcome back {comp?.role !== 'company' ? 'Admin' : comp?.company?.companyName} 👋
       </Typography>
 
       <Grid container spacing={3}>
-        <Grid xs={12} sm={6} md={3}>
+        <Grid xs={12} sm={6} md={comp?.role === 'company' ? 4 : 3}>
           <AppWidgetSummary
-            title="Weekly Sales"
-            total={714000}
-            color="success"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
-          />
-        </Grid>
-
-        <Grid xs={12} sm={6} md={3}>
-          <AppWidgetSummary
-            title="New Users"
-            total={1352831}
+            title="Total Users"
+            total={userCount?.total || '0'}
             color="info"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
+            icon={<img alt="icon" src="/assets/icons/glass/user.png" />}
           />
         </Grid>
 
-        <Grid xs={12} sm={6} md={3}>
+        <Grid xs={12} sm={6} md={comp?.role === 'company' ? 4 : 3}>
           <AppWidgetSummary
-            title="Item Orders"
-            total={1723315}
+            title="Total Verified Users"
+            total={userCount?.verified || '0'}
             color="warning"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}
+            icon={<img alt="icon" src="/assets/icons/glass/accepted.png" />}
           />
         </Grid>
 
-        <Grid xs={12} sm={6} md={3}>
+        <Grid xs={12} sm={6} md={comp?.role === 'company' ? 4 : 3}>
           <AppWidgetSummary
-            title="Bug Reports"
-            total={234}
-            color="error"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
+            title="Total Rejected Users"
+            total={userCount?.rejected || '0'}
+            color="warning"
+            icon={<img alt="icon" src="/assets/icons/glass/rejected.png" />}
           />
         </Grid>
+
+        {comp?.role === 'admin' && (
+          <Grid xs={12} sm={6} md={3}>
+            <AppWidgetSummary
+              title="Total Companies"
+              total={comps?.length || '0'}
+              color="warning"
+              icon={<img alt="icon" src="/assets/icons/glass/business.png" />}
+            />
+          </Grid>
+        )}
 
         <Grid xs={12} md={6} lg={8}>
           <AppWebsiteVisits
-            title="Website Visits"
-            subheader="(+43%) than last year"
+            title="Users Submissions Per Month"
+            // subheader="(+43%) than last year"
             chart={{
-              labels: [
-                '01/01/2003',
-                '02/01/2003',
-                '03/01/2003',
-                '04/01/2003',
-                '05/01/2003',
-                '06/01/2003',
-                '07/01/2003',
-                '08/01/2003',
-                '09/01/2003',
-                '10/01/2003',
-                '11/01/2003',
-              ],
+              labels: getLastYearMonths(),
               series: [
                 {
-                  name: 'Team A',
-                  type: 'column',
-                  fill: 'solid',
-                  data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
+                  name: 'Submissions',
+                  type: 'area',
+                  fill: 'gradient',
+                  data: months,
                 },
-                {
+
+                /* {
                   name: 'Team B',
                   type: 'area',
                   fill: 'gradient',
-                  data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
+                  data: months,
                 },
                 {
                   name: 'Team C',
                   type: 'line',
                   fill: 'solid',
                   data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
-                },
+                }, */
               ],
             }}
           />
@@ -106,13 +204,14 @@ export default function AppView() {
 
         <Grid xs={12} md={6} lg={4}>
           <AppCurrentVisits
-            title="Current Visits"
+            title="Users Status"
             chart={{
               series: [
-                { label: 'America', value: 4344 },
-                { label: 'Asia', value: 5435 },
-                { label: 'Europe', value: 1443 },
-                { label: 'Africa', value: 4443 },
+                { label: 'Verified', value: userCount?.verified || 0 },
+                { label: 'Rejected', value: userCount?.rejected || 0 },
+                { label: 'Pending', value: userCount?.pending || 0 },
+                { label: 'Resubmit', value: userCount?.resubmit || 0 },
+                { label: 'New', value: userCount?.New || 0 },
               ],
             }}
           />

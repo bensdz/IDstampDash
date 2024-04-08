@@ -38,6 +38,11 @@ function HistoryItem({ submission, current }) {
           primary={`${status} ${current ? '(current)' : ''}`}
           secondary={`${dateSubmitted?.substring(0, 10)} ${submission?.note ? `Note: ${submission?.note}` : ''}`}
         />
+        <Iconify
+          icon={!current ? (open ? 'bi:chevron-up' : 'bi:chevron-down') : ''}
+          width={20}
+          height={20}
+        />
       </ListItem>
       {current ? null : (
         <Collapse in={open} timeout="auto" unmountOnExit>

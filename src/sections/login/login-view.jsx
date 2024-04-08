@@ -39,7 +39,7 @@ export default function LoginView() {
     let res;
     try {
       res = await axios
-        .post('http://localhost:3000/api/login', { email, password })
+        .post('http://localhost:3000/api/companies/login', { email, password })
         .catch((err) => {
           if (err.response?.status === 400) throw new Error('Wrong Email or Password');
           else if (err.response?.status === 500) throw new Error('Internal Server Error');

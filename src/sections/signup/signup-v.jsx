@@ -13,11 +13,12 @@ import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { alpha, useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
-import { Alert } from '@mui/material';
+import { Alert, MenuItem } from '@mui/material';
 
 import { useRouter } from 'src/routes/hooks';
 
 import { bgGradient } from 'src/theme/css';
+import { willayas } from 'src/utils/willayas';
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
@@ -91,15 +92,24 @@ export default function SignupView() {
           value={formState.address}
           onChange={(e) => setFormState({ ...formState, address: e.target.value })}
         />
+
         <TextField
           name="willaya"
           label="Willaya"
           value={formState.willaya}
           onChange={(e) => setFormState({ ...formState, willaya: e.target.value })}
-        />
+          select
+        >
+          {willayas.map((willaya) => (
+            <MenuItem key={willaya.id} value={willaya.name}>
+              {willaya.name}
+            </MenuItem>
+          ))}
+        </TextField>
+
         <TextField
           name="commune"
-          label="City"
+          label="Commune"
           value={formState.commune}
           onChange={(e) => setFormState({ ...formState, commune: e.target.value })}
         />

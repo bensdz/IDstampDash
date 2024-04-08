@@ -50,7 +50,7 @@ export default function AccountPopover() {
 
   useEffect(() => {
     axios
-      .post(`http://localhost:3000/api/key/${compInfo?.company?.companyId}`, {
+      .post(`http://localhost:3000/api/endpoints/key/${compInfo?.company?.companyId}`, {
         token: compInfo?.token,
       })
       .then((res) => {
@@ -172,8 +172,10 @@ export default function AccountPopover() {
           modal={modal}
           onModalChange={setModal}
           api={[
-            'http://localhost:3000/api/endpoint/users',
-            'http://localhost:3000/api/key/:companyid',
+            'http://localhost:3000/api/endpoints/users',
+            'http://localhost:3000/api/endpoints/user',
+            'http://localhost:3000/api/endpoints/new',
+            'http://localhost:3000/api/endpoints/update',
           ]}
           apikey={apikey}
         />

@@ -248,16 +248,18 @@ export default function UserPage() {
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Users</Typography>
 
-        <Button
-          variant="contained"
-          color="inherit"
-          startIcon={<Iconify icon="eva:plus-fill" />}
-          onClick={() => setModalOpen(true)}
-        >
-          Verify A New User
-        </Button>
+        {compInfo?.role !== 'admin' && (
+          <Button
+            variant="contained"
+            color="inherit"
+            startIcon={<Iconify icon="eva:plus-fill" />}
+            onClick={() => setModalOpen(true)}
+          >
+            Verify A New User
+          </Button>
+        )}
         <Modal
-          open={modalOpen}
+          open={modalOpen && compInfo?.role !== 'admin'}
           onClose={() => {
             setModalOpen(false);
             fetchUsers();
