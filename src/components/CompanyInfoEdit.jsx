@@ -1,11 +1,13 @@
 import { useState } from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
 import { willayas } from 'src/utils/willayas';
 import { LoadingButton } from '@mui/lab';
-import { Alert, Box, MenuItem, Modal, TextField, Typography } from '@mui/material';
+import { Alert, Autocomplete, Box, MenuItem, Modal, TextField, Typography } from '@mui/material';
 import Iconify from './iconify';
 
 function CompanyInfoEdit({ company, modalOpen, onModalChange }) {
@@ -15,7 +17,18 @@ function CompanyInfoEdit({ company, modalOpen, onModalChange }) {
     companyAddress: company?.companyAddress,
     companyWillaya: company?.companyWillaya,
     companyCommune: company?.companyCommune,
+    dlRequired: company?.dlRequired ? company?.dlRequired : true,
+    passportRequired: company?.passportRequired ? company?.passportRequired : true,
+    idRequired: company?.idRequired ? company?.idRequired : true,
   });
+  const [docsRequired, setDocsRequired] = useState(
+    [
+      formState?.dlRequired ? 'DL' : null,
+      formState?.passportRequired ? 'Passport' : null,
+      formState?.idRequired ? 'ID' : null,
+    ].filter(Boolean)
+  );
+  const options = ['DL', 'Passport', 'ID'];
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -47,14 +60,24 @@ function CompanyInfoEdit({ company, modalOpen, onModalChange }) {
         willaya: formState.companyWillaya,
         commune: formState.companyCommune,
         email: formState.companyEmail,
+        docsRequired,
+        dl: formState.dlRequired,
+        passport: formState.passportRequired,
+        id: formState.idRequired,
       });
-      setFormState({
-        companyName: response.data.companyName,
-        companyEmail: response.data.companyEmail,
-        companyAddress: response.data.companyAddress,
-        companyWillaya: response.data.companyWillaya,
-        companyCommune: response.data.companyCommune,
-      });
+
+      if (authUser?.company && authUser?.role !== 'admin') {
+        Cookies.set(
+          '_auth_state',
+          JSON.stringify({
+            token: authUser.token,
+            role: authUser.role,
+            company: response.data.company,
+          }),
+          { path: '/' }
+        );
+      }
+
       setIsLoading(false);
       setSuccess(true);
     } catch (err) {
@@ -62,6 +85,16 @@ function CompanyInfoEdit({ company, modalOpen, onModalChange }) {
       setError(err.response?.data?.message || 'An error occurred');
       console.error(err);
     }
+  };
+
+  const handleChange = (_, newValue) => {
+    setDocsRequired(newValue);
+    setFormState((prev) => ({
+      ...prev,
+      dlRequired: newValue.includes('DL'),
+      passportRequired: newValue.includes('Passport'),
+      idRequired: newValue.includes('ID'),
+    }));
   };
 
   return (
@@ -146,6 +179,22 @@ function CompanyInfoEdit({ company, modalOpen, onModalChange }) {
           sx={{ mt: 3 }}
           value={formState.companyCommune}
           onChange={(e) => setFormState({ ...formState, companyCommune: e.target.value })}
+        />
+        <Autocomplete
+          multiple
+          sx={{ mt: 3 }}
+          id="docs-required"
+          options={options}
+          getOptionLabel={(option) => option}
+          value={docsRequired}
+          onChange={handleChange}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Required Identity Documents"
+              placeholder="Select documents"
+            />
+          )}
         />
         <LoadingButton
           fullWidth

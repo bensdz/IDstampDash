@@ -16,6 +16,7 @@ import { useRouter } from 'src/routes/hooks';
 
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
+import UserInfoEdit from 'src/components/UserInfoEdit';
 
 // ----------------------------------------------------------------------
 
@@ -29,8 +30,10 @@ export default function UserTableRow({
   email,
   userid,
   onDelete,
+  onCloseFetch,
 }) {
-  const [open, setOpen] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [modal, setModal] = useState(false);
   const router = useRouter();
 
   const statusColors = {
@@ -41,6 +44,13 @@ export default function UserTableRow({
     default: 'default',
   };
 
+  const statusIcons = {
+    Rejected: 'eva:close-circle-outline',
+    Pending: 'eva:clock-outline',
+    Resubmit: 'eva:repeat-outline',
+    Verified: 'eva:checkmark-circle-2-outline',
+    default: '',
+  };
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
   };
@@ -49,6 +59,9 @@ export default function UserTableRow({
   };
   const handleOpenDetails = () => {
     router.push(`/users/${userid}`);
+  };
+  const handleEditDetails = () => {
+    setModal(true);
   };
 
   return (
@@ -75,7 +88,9 @@ export default function UserTableRow({
         <TableCell>{companyname}</TableCell>
 
         <TableCell>
-          <Label color={statusColors[status] || statusColors.default}>{status}</Label>
+          <Label color={statusColors[status] || statusColors.default}>
+            <Iconify icon={statusIcons[status] || statusIcons.default} sx={{ pr: 0.5 }} /> {status}
+          </Label>
         </TableCell>
 
         <TableCell align="right">
@@ -96,14 +111,25 @@ export default function UserTableRow({
         }}
       >
         <MenuItem onClick={handleOpenDetails}>
-          <Iconify icon="ep:view" sx={{ mr: 2 }} />
+          <Iconify icon="ep:view" sx={{ mr: 1 }} />
           View
+        </MenuItem>
+        <MenuItem onClick={handleEditDetails}>
+          <Iconify icon="ep:edit" sx={{ mr: 1 }} />
+          Edit Details
         </MenuItem>
 
         <MenuItem onClick={onDelete} sx={{ color: 'error.main' }}>
-          <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
+          <Iconify icon="eva:trash-2-outline" sx={{ mr: 1 }} />
           Delete
         </MenuItem>
+
+        <UserInfoEdit
+          userid={userid}
+          modalOpen={modal}
+          onModalChange={setModal}
+          onCloseFetch={onCloseFetch}
+        />
       </Popover>
     </>
   );
@@ -119,4 +145,5 @@ UserTableRow.propTypes = {
   email: PropTypes.string,
   userid: PropTypes.any,
   onDelete: PropTypes.func,
+  onCloseFetch: PropTypes.func,
 };

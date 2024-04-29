@@ -1,20 +1,39 @@
+import { useState } from 'react';
 /* eslint-disable no-unsafe-optional-chaining */
 /* eslint-disable no-nested-ternary */
-import { Alert, Box, Modal, Typography } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Collapse,
+  ListItem,
+  Modal,
+  Table,
+  TableBody,
+  TableContainer,
+  Typography,
+} from '@mui/material';
 import PropTypes from 'prop-types';
 import Iconify from './iconify';
+import FraudReportTableHead from './FraudReportTableHead';
+import FraudReportTableRow from './FraudReportTableRow';
 
 function FraudReport({ open, onClose, verif }) {
+  const [collapseOpen, setCollapseOpen] = useState(false);
+  const sanctionsCheck = JSON.parse(verif.sanctionsCheck);
+
   const style = {
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 820,
+    width: 720,
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
-    borderRadius: 2,
+    borderRadius: 1,
+    overflowY: 'scroll',
+    height: `${collapseOpen && sanctionsCheck?.results?.length > 0 ? '98%' : '82%'}`,
+    display: 'block',
   };
 
   return (
@@ -36,36 +55,135 @@ function FraudReport({ open, onClose, verif }) {
           Fraud Report:
         </Typography>
 
+        <Alert severity="error" sx={{ my: 2 }}>
+          {verif.infoMatch
+            ? `Given Information and document Information match`
+            : "Given Information and document Information don't match"}
+        </Alert>
+
         <Alert severity={verif?.compareFaces <= 0.7 ? 'error' : 'info'} sx={{ my: 2 }}>
           Face match:
           {verif?.compareFaces === 0
             ? ' No face detected'
             : verif?.compareFaces <= 0.7
-              ? ` below 70% (${Math.round(verif?.compareFaces * 10000) / 100}%)`
-              : ` ${Math.round(verif?.compareFaces * 100) / 100}%`}
+              ? ` Failed - ${Math.round(verif?.compareFaces * 10000) / 100}% Expected 70%+`
+              : ` Passed (${Math.round(verif?.compareFaces * 100) / 100}%)`}
         </Alert>
 
         <Alert severity={verif?.mRZValid ? 'info' : 'error'} sx={{ my: 2 }}>
-          {verif?.mRZValid ? `MRZ code is valid` : `Invalid MRZ code`}
+          {verif?.mRZValid ? `Valid MRZ Code` : `Invalid MRZ code`}
         </Alert>
 
         <Alert severity={verif?.compareMRZ <= 70 ? 'error' : 'info'} sx={{ my: 2 }}>
-          MRZ information:
+          MRZ Information Match:
           {verif?.compareMRZ <= 70
-            ? ` MRZ information does not match (${verif?.compareMRZ}%)`
-            : ` MRZ information matches (${verif?.compareMRZ}%)`}
+            ? ` Doesn't Match (${verif?.compareMRZ}%)`
+            : ` Matches (${verif?.compareMRZ}%)`}
         </Alert>
 
         <Alert severity={verif?.compareAge <= 70 ? 'error' : 'info'} sx={{ my: 2 }}>
-          Age match:
+          Age Match:
           {verif?.compareAge <= 70
-            ? ` Age match is below 70% (${Math.round(verif?.compareAge * 10) / 10}%) \n Age guessed: ${Math.round(verif?.guessedAge * 10) / 10}`
-            : ` Age match is above 70% (${verif?.compareAge}%)`}
+            ? ` Failed (${Math.round(verif?.compareAge * 10) / 10}% Expected 70%+) \n Age Guessed: ${Math.round(verif?.guessedAge * 10) / 10}`
+            : ` Passed (${verif?.compareAge}%)`}
         </Alert>
 
-        <Alert severity={verif?.compareGender === false ? 'error' : 'info'} sx={{ my: 2 }}>
-          {verif?.compareGender ? `Gender matches` : `Gender does not match`}
+        <Alert
+          // icon={verif?.compareGender !== false}
+          severity={verif?.compareGender === false ? 'error' : 'info'}
+          sx={{ my: 2 }}
+        >
+          {verif?.compareGender
+            ? `Gender Matches`
+            : `Gender Guessed Doesn't Match With Document Gender`}
         </Alert>
+        {sanctionsCheck?.results && (
+          <>
+            <ListItem button onClick={() => setCollapseOpen(!collapseOpen)} sx={{ p: 0 }}>
+              <Alert
+                severity={sanctionsCheck?.results?.length > 0 ? 'error' : 'info'}
+                sx={{ my: 2, width: '100%', cursor: 'pointer', m: 0 }}
+              >
+                Sanctions Check: {sanctionsCheck?.results?.length} Matches Found
+                <Iconify
+                  icon={collapseOpen ? 'bi:chevron-up' : 'bi:chevron-down'}
+                  width={20}
+                  height={20}
+                  sx={{ ml: 1, aligncontent: 'end', float: 'right', cursor: 'pointer' }}
+                />
+              </Alert>
+            </ListItem>
+
+            <Collapse in={collapseOpen} timeout="auto" unmountOnExit sx={{}}>
+              {sanctionsCheck?.results?.length > 0 ? (
+                <Box sx={{ p: 1 }} component="div" overflow="auto">
+                  <TableContainer sx={{ overflow: 'unset' }}>
+                    <Table>
+                      <FraudReportTableHead
+                        order="asc"
+                        orderBy="name"
+                        headLabel={[
+                          { id: 'name', label: 'Name' },
+                          { id: 'birthdate', label: 'Date of Birth' },
+                          { id: 'pob', label: 'Place of Birth' },
+                          { id: 'country', label: 'Country' },
+                          { id: 'address', label: 'Address' },
+                          { id: 'aliases', label: 'Name Aliases' },
+                          { id: 'foundIn', label: 'Found In' },
+                          { id: 'matchScore', label: 'Match Score' },
+                        ]}
+                        onRequestSort={() => {}}
+                      />
+                      <TableBody>
+                        {/* {sanctionsCheck?.results?.map((result) => (
+                          <FraudReportTableRow
+                            key={result.name}
+                            properties={{
+                              name: result.proprietes.name,
+                              dob: result.birthdate,
+                              pob: result.pob,
+                              country: result.country,
+                              address: result.address,
+                              aliases: result.aliases,
+                              foundIn: result.foundIn,
+                              matchScore: result.matchScore,
+                            }}
+                          />
+                        ))} */}
+                        <FraudReportTableRow
+                          properties={{
+                            name: 'John',
+                            dob: '12/12/2002',
+                            aliases: ['test'],
+                            country: 'USA',
+                            address: '1234, Test',
+                            matchScore: 70,
+                            foundIn: ['OFACHJGJ', 'EU', 'UN'],
+                          }}
+                        />
+                        <FraudReportTableRow
+                          properties={{
+                            name: 'John Wick',
+                            dob: '12/12/2002',
+                            aliases: ['tests', 'ttt0'],
+                            country: 'USA',
+                            address: '1234, Test Street 1556',
+                            matchScore: 60,
+                            foundIn: ['OFAC', 'EU', 'UN', 'NOWHERE'],
+                          }}
+                        />
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Box>
+              ) : (
+                <Typography variant="body2" sx={{ textAlign: 'center', mt: 2 }}>
+                  No Matches Found
+                </Typography>
+              )}
+            </Collapse>
+          </>
+        )}
       </Box>
     </Modal>
   );

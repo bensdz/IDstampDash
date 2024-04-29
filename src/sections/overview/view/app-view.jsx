@@ -44,7 +44,7 @@ export default function AppView() {
       date.setMonth(date.getMonth() + 1);
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const year = date.getFullYear();
-      dates.push(`${month}/01/${year}`);
+      dates.push(`${month}/31/${year}`);
     }
 
     return dates;

@@ -405,6 +405,7 @@ export default function UserPage() {
                         selected={selected.indexOf(row.userId) !== -1}
                         handleClick={(event) => handleClick(event, row.userId)}
                         onDelete={() => handleDeleteUser(row.userId)}
+                        onCloseFetch={fetchUsers}
                       />
                     ))}
 
