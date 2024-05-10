@@ -20,6 +20,7 @@ import { bgGradient } from 'src/theme/css';
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
+import { baseURL } from '../../../apiconfig';
 
 // ----------------------------------------------------------------------
 
@@ -32,20 +33,17 @@ export default function LoginView() {
   const [email, setEmail] = useState('');
   const [error, setError] = useState(null);
   const signIn = useSignIn();
-  
 
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSignIn = async () => {
     let res;
     try {
-      res = await axios
-        .post('http://localhost:3000/api/companies/login', { email, password })
-        .catch((err) => {
-          if (err.response?.status === 400) throw new Error('Wrong Email or Password');
-          else if (err.response?.status === 500) throw new Error('Internal Server Error');
-          else throw new Error('Unable to login');
-        });
+      res = await axios.post(`${baseURL}/companies/login`, { email, password }).catch((err) => {
+        if (err.response?.status === 400) throw new Error('Wrong Email or Password');
+        else if (err.response?.status === 500) throw new Error('Internal Server Error');
+        else throw new Error('Unable to login');
+      });
       const { token, role, company, auth } = res.data;
       if (auth) {
         signIn({
@@ -95,7 +93,7 @@ export default function LoginView() {
       </Stack>
 
       <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ my: 3 }}>
-        <Link variant="subtitle2" underline="hover">
+        <Link variant="subtitle2" underline="hover" onClick={() => router.push('/resetpw')}>
           Forgot password?
         </Link>
       </Stack>

@@ -7,6 +7,8 @@ import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 import UserInfoPage from 'src/pages/userinfo';
 import DashboardLayout from 'src/layouts/dashboard';
 import Documentation from 'src/pages/Documentation';
+import ResetPwEmail from 'src/pages/resetpwemail';
+import ResetPw from 'src/pages/resetpw';
 
 export const IndexPage = lazy(() => import('src/pages/app'));
 export const UserPage = lazy(() => import('src/pages/user'));
@@ -82,6 +84,14 @@ export default function Router() {
     {
       path: 'docs',
       element: <Documentation />,
+    },
+    {
+      path: '/resetpw',
+      element: <ResetPwEmail />,
+    },
+    {
+      path: '/resetpw/change',
+      element: <ResetPw />,
     },
   ]);
 

@@ -207,12 +207,13 @@ export default function AppView() {
             title="Users Status"
             chart={{
               series: [
-                { label: 'Verified', value: userCount?.verified || 0 },
-                { label: 'Rejected', value: userCount?.rejected || 0 },
-                { label: 'Pending', value: userCount?.pending || 0 },
-                { label: 'Resubmit', value: userCount?.resubmit || 0 },
-                { label: 'New', value: userCount?.New || 0 },
+                { label: 'Verified', value: userCount?.verified || 0, color: 'red' },
+                { label: 'Rejected', value: userCount?.rejected || 0, color: 'gray' },
+                { label: 'Pending', value: userCount?.pending || 0, color: 'white' },
+                { label: 'Resubmit', value: userCount?.resubmit || 0, color: 'blue' },
+                { label: 'New', value: userCount?.New || 0, color: 'red' },
               ],
+              colors: ['#00A76F', '#FF5630', '#00B8D9', '#FFAB00', '#CAFDF5'],
             }}
           />
         </Grid>

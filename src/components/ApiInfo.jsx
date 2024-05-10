@@ -102,7 +102,7 @@ function ApiInfo({ modal, onModalChange, api, apikey }) {
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton edge="end">
+                <IconButton edge="end" onClick={() => navigator.clipboard.writeText(apikey)}>
                   <Iconify icon="mingcute:copy-fill" />
                 </IconButton>
                 <IconButton onClick={() => setShowKey(!showKey)} edge="end">

@@ -49,13 +49,14 @@ export default function AccountPopover() {
   const [apikey, setApiKey] = useState('');
 
   useEffect(() => {
-    axios
-      .post(`http://localhost:3000/api/endpoints/key/${compInfo?.company?.companyId}`, {
-        token: compInfo?.token,
-      })
-      .then((res) => {
-        setApiKey(res.data.key);
-      });
+    if (compInfo?.company?.companyId)
+      axios
+        .post(`http://localhost:3000/api/endpoints/key/${compInfo?.company?.companyId}`, {
+          token: compInfo?.token,
+        })
+        .then((res) => {
+          setApiKey(res.data.key);
+        });
   }, [compInfo?.company?.companyId, compInfo.companyId, compInfo?.token]);
 
   const handleOpen = (event) => {
