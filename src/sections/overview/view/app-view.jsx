@@ -15,6 +15,7 @@ import Typography from '@mui/material/Typography';
 import AppCurrentVisits from '../app-current-visits';
 import AppWebsiteVisits from '../app-website-visits';
 import AppWidgetSummary from '../app-widget-summary';
+import { baseURL } from '../../../../apiconfig';
 // import AppTrafficBySite from '../app-traffic-by-site';
 // import AppCurrentSubject from '../app-current-subject';
 // import AppConversionRates from '../app-conversion-rates';
@@ -52,7 +53,7 @@ export default function AppView() {
 
   const fetchCategories = useCallback(async () => {
     axios
-      .post('http://localhost:3000/api/users/count', {
+      .post(`${baseURL}/users/count`, {
         token: comp?.token,
         companyId: comp?.company?.companyId,
         role: comp?.role,
@@ -68,7 +69,7 @@ export default function AppView() {
 
   const fetchComps = useCallback(async () => {
     axios
-      .post('http://localhost:3000/api/companies', {
+      .post(`${baseURL}/companies`, {
         token: comp?.token,
         role: comp?.role,
       })
@@ -87,7 +88,7 @@ export default function AppView() {
     oneYearAgo.setDate(1);
 
     try {
-      const response = await axios.post('http://localhost:3000/api/submissions/monthly', {
+      const response = await axios.post(`${baseURL}/submissions/monthly`, {
         token: comp?.token,
         companyId: comp?.company?.companyId,
         role: comp?.role,
@@ -213,7 +214,7 @@ export default function AppView() {
                 { label: 'Resubmit', value: userCount?.resubmit || 0, color: 'blue' },
                 { label: 'New', value: userCount?.New || 0, color: 'red' },
               ],
-              colors: ['#00A76F', '#FF5630', '#00B8D9', '#FFAB00', '#CAFDF5'],
+              colors: ['#00A76F', '#FF5630', '#00B8D9', '#FFAB00', '#C0C0C0'],
             }}
           />
         </Grid>

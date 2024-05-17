@@ -91,6 +91,16 @@ function ApiInfo({ modal, onModalChange, api, apikey }) {
         />
 
         <TextField
+          // id="outlined-basic"
+          name="api5"
+          label="POST: Delete User By ID"
+          variant="outlined"
+          fullWidth
+          sx={{ mt: 3 }}
+          value={api[4]}
+        />
+
+        <TextField
           id="outlined-basic"
           name="apikey"
           label="Your Api Key"

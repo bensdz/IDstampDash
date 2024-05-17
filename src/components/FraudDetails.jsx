@@ -17,7 +17,7 @@ function FraudDetails({ verif }) {
         <>
           <GaugeChart
             id="gauge-chart1"
-            percent={verif?.fraudIndex || 0.7}
+            percent={verif?.fraudIndex || 0}
             style={{
               width: '40%',
               margin: 'auto',
@@ -26,6 +26,8 @@ function FraudDetails({ verif }) {
               textAlign: 'center',
             }}
             textColor="#00000"
+            nrOfLevels={3}
+            arcsLength={[0.25, 0.25, 0.5]}
             colors={['#50C878', '#ff9f00', '#cf352e']}
           />
           {verif?.compareFaces <= 0.7 && (

@@ -23,6 +23,7 @@ import { willayas } from 'src/utils/willayas';
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 import useSignIn from 'react-auth-kit/hooks/useSignIn';
+import { baseURL } from '../../../apiconfig';
 
 // ----------------------------------------------------------------------
 
@@ -49,7 +50,7 @@ export default function SignupView() {
   const handleSubmit = async () => {
     let res;
     try {
-      res = await axios.post('http://localhost:3000/api/companies/new', formState).catch((err) => {
+      res = await axios.post(`${baseURL}/companies/new`, formState).catch((err) => {
         if (err.response?.status === 400) throw new Error('Company already exists');
         else if (err.response?.status === 500) throw new Error('Internal Server Error');
         else throw new Error('Unable to login');

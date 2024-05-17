@@ -8,6 +8,7 @@ import { Alert, Box, Modal, TextField, Typography } from '@mui/material';
 import { DateField, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
+import { baseURL } from '../../apiconfig';
 
 function UserInfoEdit({ userid, modalOpen, onModalChange, onCloseFetch }) {
   const authUser = useAuthUser();
@@ -53,10 +54,10 @@ function UserInfoEdit({ userid, modalOpen, onModalChange, onCloseFetch }) {
   const handleUpdate = async () => {
     try {
       setIsLoading(true);
-      await axios.put(`http://localhost:3000/api/users/${userid}`, {
+      await axios.put(`${baseURL}/users/${userid}`, {
         token: authUser?.token,
         role: authUser?.role,
-        companyId: authUser.companyId,
+        companyId: authUser.company ? authUser.company.companyId : null,
         fname: formState.fname,
         lname: formState.lname,
         gender: formState.gender,
@@ -76,7 +77,7 @@ function UserInfoEdit({ userid, modalOpen, onModalChange, onCloseFetch }) {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const res = await axios.post(`http://localhost:3000/api/users/details/${userid}`, {
+        const res = await axios.post(`${baseURL}/users/details/${userid}`, {
           token: authUser?.token,
           role: authUser?.role,
           companyId: authUser?.company?.companyId,

@@ -21,6 +21,7 @@ import CompaniesTableRow from '../companies-table-row';
 import CompaniesTableHead from '../companies-table-head';
 import CompaniesTableToolbar from '../companies-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
+import { baseURL } from '../../../../apiconfig';
 
 // ----------------------------------------------------------------------
 
@@ -93,7 +94,7 @@ export default function CompaniesPage() {
 
   const handleDeleteCompany = async (companyId) => {
     try {
-      const res = await axios.delete(`http://localhost:3000/api/companies/${companyId}`, {
+      const res = await axios.delete(`${baseURL}/companies/${companyId}`, {
         data: {
           token: admin?.token,
           role: admin?.role,
@@ -127,7 +128,7 @@ export default function CompaniesPage() {
   const fetchComps = useCallback(async () => {
     setIsLoading(true);
     axios
-      .post('http://localhost:3000/api/companies', {
+      .post(`${baseURL}/companies`, {
         token: admin?.token,
         role: admin?.role,
       })

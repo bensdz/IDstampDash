@@ -16,6 +16,7 @@ import { useRouter } from 'src/routes/hooks';
 import CompanyInfoEdit from 'src/components/CompanyInfoEdit';
 import ApiInfo from 'src/components/ApiInfo';
 import axios from 'axios';
+import { baseURL } from '../../../../apiconfig';
 
 // ----------------------------------------------------------------------
 
@@ -51,7 +52,7 @@ export default function AccountPopover() {
   useEffect(() => {
     if (compInfo?.company?.companyId)
       axios
-        .post(`http://localhost:3000/api/endpoints/key/${compInfo?.company?.companyId}`, {
+        .post(`${baseURL}/endpoints/key/${compInfo?.company?.companyId}`, {
           token: compInfo?.token,
         })
         .then((res) => {
@@ -173,10 +174,11 @@ export default function AccountPopover() {
           modal={modal}
           onModalChange={setModal}
           api={[
-            'http://localhost:3000/api/endpoints/users',
-            'http://localhost:3000/api/endpoints/user',
-            'http://localhost:3000/api/endpoints/new',
-            'http://localhost:3000/api/endpoints/update',
+            `${baseURL}/endpoints/users`,
+            `${baseURL}/endpoints/user`,
+            `${baseURL}/endpoints/new`,
+            `${baseURL}/endpoints/update`,
+            `${baseURL}/endpoints/delete`,
           ]}
           apikey={apikey}
         />

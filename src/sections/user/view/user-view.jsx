@@ -31,6 +31,7 @@ import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
+import { baseURL } from '../../../../apiconfig';
 
 // ----------------------------------------------------------------------
 
@@ -94,7 +95,7 @@ export default function UserPage() {
     const fetchUsers = () => {
       setIsLoading(true);
       axios
-        .post('http://localhost:3000/api/users', {
+        .post(`${baseURL}/users`, {
           companyId: compInfo?.company?.companyId,
           companyEmail: compInfo?.company?.companyEmail,
           token: compInfo?.token,
@@ -121,7 +122,7 @@ export default function UserPage() {
   const fetchUsers = () => {
     setIsLoading(true);
     axios
-      .post('http://localhost:3000/api/users', {
+      .post(`${baseURL}/users`, {
         companyId: compInfo?.company?.companyId,
         companyEmail: compInfo?.company?.companyEmail,
         token: compInfo?.token,
@@ -139,7 +140,7 @@ export default function UserPage() {
 
   const handleDeleteUser = async (userId) => {
     try {
-      const res = await axios.delete(`http://localhost:3000/api/users/${userId}`, {
+      const res = await axios.delete(`${baseURL}/users/${userId}`, {
         data: {
           companyId: compInfo?.company?.companyId,
           token: compInfo?.token,
@@ -221,7 +222,7 @@ export default function UserPage() {
       ...formState,
     }); */
     try {
-      const res = await axios.post('http://localhost:3000/api/users/new', {
+      const res = await axios.post(`${baseURL}/users/new`, {
         companyId: compInfo?.company?.companyId,
         token: compInfo?.token,
         role: compInfo?.role,
@@ -408,6 +409,73 @@ export default function UserPage() {
                         onCloseFetch={fetchUsers}
                       />
                     ))}
+                  {/* <UserTableRow
+                    key="1"
+                    userid={39}
+                    name="Farouk Benslimane"
+                    email="itisbens@gmail.com"
+                    status="Verified"
+                    companyname="Banque Extérieure D’algérie"
+                    companyId={1}
+                    selected={selected.indexOf(39) !== -1}
+                    handleClick={(event) => handleClick(event, 39)}
+                    onDelete={() => handleDeleteUser(39)}
+                    onCloseFetch={fetchUsers}
+                  />
+                  <UserTableRow
+                    key="2"
+                    userid={40}
+                    name="Bahamida Mouheb"
+                    email="mouhe.bmd@gmail.com"
+                    status="Rejected"
+                    companyname="Banque Extérieure D’algérie"
+                    companyId={1}
+                    selected={selected.indexOf(40) !== -1}
+                    handleClick={(event) => handleClick(event, 40)}
+                    onDelete={() => handleDeleteUser(40)}
+                    onCloseFetch={fetchUsers}
+                  />
+                  <UserTableRow
+                    key="3"
+                    userid={41}
+                    name="Amine Benmouhoub"
+                    email="amine.benmouhob@gmail.com"
+                    status="Resubmit"
+                    companyname="Banque Extérieure D’algérie"
+                    companyId={1}
+                    selected={selected.indexOf(41) !== -1}
+                    handleClick={(event) => handleClick(event, 41)}
+                    onDelete={() => handleDeleteUser(41)}
+                    onCloseFetch={fetchUsers}
+                  />
+
+                  <UserTableRow
+                    key="4"
+                    userid={42}
+                    name="Henni Mohammed"
+                    email="henni.mohamed@gmail.com"
+                    status="Pending"
+                    companyname="Banque Extérieure D’algérie"
+                    companyId={1}
+                    selected={selected.indexOf(42) !== -1}
+                    handleClick={(event) => handleClick(event, 42)}
+                    onDelete={() => handleDeleteUser(42)}
+                    onCloseFetch={fetchUsers}
+                  />
+
+                  <UserTableRow
+                    key="4"
+                    userid={42}
+                    name="Moussaoui Ahmed"
+                    email="mous.ahmed@hotmail.com"
+                    status="New"
+                    companyname="Banque Extérieure D’algérie"
+                    companyId={1}
+                    selected={selected.indexOf(42) !== -1}
+                    handleClick={(event) => handleClick(event, 42)}
+                    onDelete={() => handleDeleteUser(42)}
+                    onCloseFetch={fetchUsers}
+                  /> */}
 
                   <TableEmptyRows
                     height={77}

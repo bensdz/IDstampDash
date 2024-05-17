@@ -205,6 +205,43 @@ function DocumentationView() {
                 <code>500 Internal Server Error</code>: If an error occurs during the process.
               </li>
             </ul>
+
+            <h2>5. Delete a user by ID </h2>
+            <p>
+              <strong>Endpoint:</strong> <code>POST /api/endpoints/delete</code>
+            </p>
+            <p>
+              <strong>Description:</strong> Deletes a user by ID after verifying the provided hashed
+              key.
+            </p>
+            <p>
+              <strong>Request Body:</strong>
+            </p>
+            <pre>
+              {JSON.stringify(
+                {
+                  companyId: 'Company ID for which to delete a user',
+                  key: 'Hashed key for authorization',
+                  userId: 'User ID for which to delete',
+                },
+                null,
+                2
+              )}
+            </pre>
+            <p>
+              <strong>Responses:</strong>
+            </p>
+            <ul>
+              <li>
+                <code>200 OK</code>: User deleted successfully.
+              </li>
+              <li>
+                <code>401 Unauthorized</code>: If the hashed key is incorrect.
+              </li>
+              <li>
+                <code>500 Internal Server Error</code>: If an error occurs during the process.
+              </li>
+            </ul>
           </div>
 
           {/* <Box

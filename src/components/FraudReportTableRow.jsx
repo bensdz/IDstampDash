@@ -29,6 +29,13 @@ function FraudReportTableRow({ properties }) {
         ))}
       </TableCell>
       <TableCell>
+        {properties?.topics?.map((top) => (
+          <Label sx={{ m: 0.2 }} key={top}>
+            {top}
+          </Label>
+        ))}
+      </TableCell>
+      <TableCell>
         {properties?.foundIn?.map((found) => (
           <Label sx={{ m: 0.2, color: 'white', bgcolor: '#FF5630' }} key={found}>
             {found}

@@ -17,12 +17,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import Iconify from 'src/components/iconify';
 
 import Logo from 'src/components/logo';
-import { useRouter } from 'src/routes/hooks';
+// import { useRouter } from 'src/routes/hooks';
 import { bgGradient } from 'src/theme/css';
+import { baseURL } from '../../../apiconfig';
 
 export default function ResetPwView() {
   const theme = useTheme();
-  const router = useRouter();
+  // const router = useRouter();
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
@@ -42,12 +43,10 @@ export default function ResetPwView() {
 
   const checkCode = useCallback(async () => {
     try {
-      await axios
-        .post('http://localhost:3000/api/companies/reset/check', { email, code })
-        .catch((err) => {
-          if (err.response?.status === 500) throw new Error('Internal Server Error');
-          else throw new Error('Invalid code');
-        });
+      await axios.post(`${baseURL}/companies/reset/check`, { email, code }).catch((err) => {
+        if (err.response?.status === 500) throw new Error('Internal Server Error');
+        else throw new Error('Invalid code');
+      });
       setError(null);
       setCodeValid(true);
     } catch (err) {
@@ -69,7 +68,7 @@ export default function ResetPwView() {
   const handleSubmit = async () => {
     try {
       await axios
-        .post('http://localhost:3000/api/companies/reset/change', {
+        .post(`${baseURL}/companies/reset/change`, {
           email,
           password: formState.pw,
           code,
@@ -114,7 +113,13 @@ export default function ResetPwView() {
           <Typography variant="h4">Reset Your Password</Typography>
 
           <Typography variant="body2" sx={{ my: 2 }}>
-            <Link variant="subtitle2" onClick={() => router.push('/login')}>
+            <Link
+              variant="subtitle2"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate('/login');
+              }}
+            >
               Get back to login
             </Link>
           </Typography>

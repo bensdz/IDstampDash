@@ -28,6 +28,7 @@ import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import { LoadingButton } from '@mui/lab';
+import { baseURL } from '../../../../apiconfig';
 
 function UserInfo() {
   const router = useRouter();
@@ -57,7 +58,7 @@ function UserInfo() {
   const fetchUserDetails = useCallback(() => {
     setIsLoading(true);
     axios
-      .post(`http://localhost:3000/api/users/details/${userid}`, {
+      .post(`${baseURL}/users/details/${userid}`, {
         token: comp?.token,
         role: comp?.role,
         companyId: comp?.company?.companyId,
@@ -84,7 +85,7 @@ function UserInfo() {
 
   const handleSetStatus = async (newStatus) => {
     try {
-      await axios.post(`http://localhost:3000/api/users/update`, {
+      await axios.post(`${baseURL}/users/update`, {
         token: comp?.token,
         role: comp?.role,
         submissionId: latestSubmission?.submissionId,

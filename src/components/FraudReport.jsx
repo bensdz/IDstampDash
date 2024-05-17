@@ -9,6 +9,7 @@ import {
   Modal,
   Table,
   TableBody,
+  TableCell,
   TableContainer,
   Typography,
 } from '@mui/material';
@@ -55,10 +56,8 @@ function FraudReport({ open, onClose, verif }) {
           Fraud Report:
         </Typography>
 
-        <Alert severity="error" sx={{ my: 2 }}>
-          {verif.infoMatch
-            ? `Given Information and document Information match`
-            : "Given Information and document Information don't match"}
+        <Alert severity="info" sx={{ my: 2 }}>
+          Given Information and document Information match
         </Alert>
 
         <Alert severity={verif?.compareFaces <= 0.7 ? 'error' : 'info'} sx={{ my: 2 }}>
@@ -77,15 +76,15 @@ function FraudReport({ open, onClose, verif }) {
         <Alert severity={verif?.compareMRZ <= 70 ? 'error' : 'info'} sx={{ my: 2 }}>
           MRZ Information Match:
           {verif?.compareMRZ <= 70
-            ? ` Doesn't Match (${verif?.compareMRZ}%)`
-            : ` Matches (${verif?.compareMRZ}%)`}
+            ? ` Doesn't Match (${Math.round(verif?.compareMRZ * 100) / 100}%)`
+            : ` Matches (${Math.round(verif?.compareMRZ * 100) / 100}%)`}
         </Alert>
 
         <Alert severity={verif?.compareAge <= 70 ? 'error' : 'info'} sx={{ my: 2 }}>
           Age Match:
           {verif?.compareAge <= 70
             ? ` Failed (${Math.round(verif?.compareAge * 10) / 10}% Expected 70%+) \n Age Guessed: ${Math.round(verif?.guessedAge * 10) / 10}`
-            : ` Passed (${verif?.compareAge}%)`}
+            : ` Passed (${Math.round(verif?.compareAge * 100) / 100}%)`}
         </Alert>
 
         <Alert
@@ -115,38 +114,40 @@ function FraudReport({ open, onClose, verif }) {
             </ListItem>
 
             <Collapse in={collapseOpen} timeout="auto" unmountOnExit sx={{}}>
-              {sanctionsCheck?.results?.length > 0 ? (
-                <Box sx={{ p: 1 }} component="div" overflow="auto">
-                  <TableContainer sx={{ overflow: 'unset' }}>
-                    <Table>
-                      <FraudReportTableHead
-                        order="asc"
-                        orderBy="name"
-                        headLabel={[
-                          { id: 'name', label: 'Name' },
-                          { id: 'birthdate', label: 'Date of Birth' },
-                          { id: 'pob', label: 'Place of Birth' },
-                          { id: 'country', label: 'Country' },
-                          { id: 'address', label: 'Address' },
-                          { id: 'aliases', label: 'Name Aliases' },
-                          { id: 'foundIn', label: 'Found In' },
-                          { id: 'matchScore', label: 'Match Score' },
-                        ]}
-                        onRequestSort={() => {}}
-                      />
+              <Box sx={{ p: 1 }} component="div" overflow="auto">
+                <TableContainer sx={{ overflow: 'unset' }}>
+                  <Table>
+                    <FraudReportTableHead
+                      order="asc"
+                      orderBy="name"
+                      headLabel={[
+                        { id: 'name', label: 'Name' },
+                        { id: 'birthdate', label: 'Date of Birth' },
+                        { id: 'pob', label: 'Place of Birth' },
+                        { id: 'country', label: 'Country' },
+                        { id: 'address', label: 'Address' },
+                        { id: 'aliases', label: 'Name Aliases' },
+                        { id: 'topics', label: 'Topics' },
+                        { id: 'foundIn', label: 'Found In' },
+                        { id: 'matchScore', label: 'Match Score' },
+                      ]}
+                      onRequestSort={() => {}}
+                    />
+                    {sanctionsCheck?.results?.length > 0 ? (
                       <TableBody>
                         {/* {sanctionsCheck?.results?.map((result) => (
                           <FraudReportTableRow
                             key={result.name}
                             properties={{
-                              name: result.proprietes.name,
-                              dob: result.birthdate,
-                              pob: result.pob,
-                              country: result.country,
-                              address: result.address,
-                              aliases: result.aliases,
-                              foundIn: result.foundIn,
-                              matchScore: result.matchScore,
+                              name: result?.proprietes?.caption || "",
+                              dob: result?.properties?.birthDate|| "",
+                              pob: result?.properties?.birthPlace|| "",
+                              country: result?.properties?.country || "",
+                              address: result.address || "",
+                              aliases: result?.properties?.alias || [],
+                              topics: result?.properties?.topics || [],
+                              foundIn: result.foundIn || [] ,
+                              matchScore: result?.score,
                             }}
                           />
                         ))} */}
@@ -154,33 +155,39 @@ function FraudReport({ open, onClose, verif }) {
                           properties={{
                             name: 'John',
                             dob: '12/12/2002',
-                            aliases: ['test'],
+                            aliases: ['James', 'Jim', 'JW'],
+                            topics: ['pep', 'terrorism', 'fraud'],
                             country: 'USA',
-                            address: '1234, Test',
+                            address: '1234, Test address',
                             matchScore: 70,
-                            foundIn: ['OFACHJGJ', 'EU', 'UN'],
+                            foundIn: ['OFAC', 'EU', 'UN'],
                           }}
                         />
                         <FraudReportTableRow
                           properties={{
                             name: 'John Wick',
                             dob: '12/12/2002',
-                            aliases: ['tests', 'ttt0'],
+                            topics: ['pep', 'terrorism', 'fraud'],
+                            aliases: ['Johan', 'Wick', 'JW'],
                             country: 'USA',
                             address: '1234, Test Street 1556',
                             matchScore: 60,
-                            foundIn: ['OFAC', 'EU', 'UN', 'NOWHERE'],
+                            foundIn: ['OFAC', 'EU'],
                           }}
                         />
                       </TableBody>
-                    </Table>
-                  </TableContainer>
-                </Box>
-              ) : (
-                <Typography variant="body2" sx={{ textAlign: 'center', mt: 2 }}>
-                  No Matches Found
-                </Typography>
-              )}
+                    ) : (
+                      <TableCell
+                        variant="body2"
+                        style={{ textAlign: 'center', marginTop: '2rem' }}
+                        colSpan={8}
+                      >
+                        No Matches Found
+                      </TableCell>
+                    )}
+                  </Table>
+                </TableContainer>
+              </Box>
             </Collapse>
           </>
         )}

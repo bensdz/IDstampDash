@@ -26,6 +26,7 @@ function UserDetails({ userinfo, fraudScore, docinfo }) {
   // const [pop1Open, setPop1Open] = useState(false);
   // const [pop2Open, setPop2Open] = useState(false);
   // const [pop3Open, setPop3Open] = useState(false);
+
   return (
     <>
       <Label color={statusColors[userinfo?.status] || statusColors.default} sx={{ my: 2 }}>
@@ -52,7 +53,8 @@ function UserDetails({ userinfo, fraudScore, docinfo }) {
           <Typography variant="subtitle1" component="p">
             {userinfo?.userFirstName}
             {docinfo?.firstname &&
-              docinfo?.firstname?.toUpperCase() !== userinfo?.userFirstName?.toUpperCase() && (
+              docinfo?.firstname?.toUpperCase().replace(' ', '') !==
+                userinfo?.userFirstName?.toUpperCase().replace(' ', '') && (
                 <Iconify
                   icon="material-symbols:info-outline"
                   color="warning"
@@ -75,7 +77,8 @@ function UserDetails({ userinfo, fraudScore, docinfo }) {
           <Typography variant="subtitle1" component="p">
             {userinfo?.userLastName}
             {docinfo?.lastname &&
-              docinfo?.lastname?.toUpperCase() !== userinfo?.userLastName?.toUpperCase() && (
+              docinfo?.lastname?.toUpperCase().replace(' ', '') !==
+                userinfo?.userLastName?.toUpperCase().replace(' ', '') && (
                 <Iconify
                   icon="material-symbols:info-outline"
                   color="warning"
@@ -109,7 +112,8 @@ function UserDetails({ userinfo, fraudScore, docinfo }) {
           <Typography variant="subtitle1" component="p">
             {bday?.substring(0, 10)}
             {docinfo?.dateOfBirth &&
-              docinfo?.dateOfBirth?.substring(0, 10) !== bday?.substring(0, 10) && (
+              docinfo?.dateOfBirth?.replace(' ', '').substring(0, 10) !==
+                bday?.replace(' ', '').substring(0, 10) && (
                 <>
                   <Iconify
                     icon="material-symbols:info-outline"

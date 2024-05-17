@@ -9,6 +9,7 @@ import { willayas } from 'src/utils/willayas';
 import { LoadingButton } from '@mui/lab';
 import { Alert, Autocomplete, Box, MenuItem, Modal, TextField, Typography } from '@mui/material';
 import Iconify from './iconify';
+import { baseURL } from '../../apiconfig';
 
 function CompanyInfoEdit({ company, modalOpen, onModalChange }) {
   const [formState, setFormState] = useState({
@@ -52,7 +53,7 @@ function CompanyInfoEdit({ company, modalOpen, onModalChange }) {
   const handleUpdate = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.put(`http://localhost:3000/api/companies/${company.companyId}`, {
+      const response = await axios.put(`${baseURL}/companies/${company.companyId}`, {
         token: authUser?.token,
         role: authUser?.role,
         name: formState.companyName,
@@ -163,6 +164,7 @@ function CompanyInfoEdit({ company, modalOpen, onModalChange }) {
           sx={{ mt: 3 }}
           value={formState.companyWillaya}
           onChange={(e) => setFormState({ ...formState, companyWillaya: e.target.value })}
+          select
         >
           {willayas.map((willaya) => (
             <MenuItem key={willaya.id} value={willaya.name}>

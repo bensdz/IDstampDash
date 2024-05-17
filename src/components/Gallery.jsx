@@ -2,6 +2,7 @@
 import PropTypes from 'prop-types';
 import { Box } from '@mui/material';
 import { useState, useRef } from 'react';
+import { imgsBaseURL } from '../../apiconfig';
 
 const ZoomableImage = ({ src, alt, zoomArea }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -74,22 +75,22 @@ export function Gallery({ imgs }) {
   } else if (imgs[1] === null) {
     data = [
       {
-        image: `http://localhost:3000/${String(imgs[0])?.substring(2)}`,
+        image: `${imgsBaseURL}/${String(imgs[0])?.substring(2)}`,
       },
       {
-        image: `http://localhost:3000/${String(imgs[2])?.substring(2)}`,
+        image: `${imgsBaseURL}/${String(imgs[2])?.substring(2)}`,
       },
     ];
   } else {
     data = [
       {
-        image: `http://localhost:3000/${String(imgs[0])?.substring(2)}`,
+        image: `${imgsBaseURL}/${String(imgs[0])?.substring(2)}`,
       },
       {
-        image: `http://localhost:3000/${String(imgs[1])?.substring(2)}`,
+        image: `${imgsBaseURL}/${String(imgs[1])?.substring(2)}`,
       },
       {
-        image: `http://localhost:3000/${String(imgs[2])?.substring(2)}`,
+        image: `${imgsBaseURL}/${String(imgs[2])?.substring(2)}`,
       },
     ];
   }
