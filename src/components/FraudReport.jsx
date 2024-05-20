@@ -21,6 +21,7 @@ import FraudReportTableRow from './FraudReportTableRow';
 function FraudReport({ open, onClose, verif }) {
   const [collapseOpen, setCollapseOpen] = useState(false);
   const sanctionsCheck = JSON.parse(verif.sanctionsCheck);
+  // console.log(sanctionsCheck?.results);
 
   const style = {
     position: 'absolute',
@@ -56,8 +57,10 @@ function FraudReport({ open, onClose, verif }) {
           Fraud Report:
         </Typography>
 
-        <Alert severity="info" sx={{ my: 2 }}>
-          Given Information and document Information match
+        <Alert severity={verif?.compareInfo ? 'info' : 'error'} sx={{ my: 2 }}>
+          {verif?.compareInfo
+            ? `Given Information and document Information Matches`
+            : `Given Information and document Information don&apos;t match`}
         </Alert>
 
         <Alert severity={verif?.compareFaces <= 0.7 ? 'error' : 'info'} sx={{ my: 2 }}>
@@ -121,6 +124,7 @@ function FraudReport({ open, onClose, verif }) {
                       order="asc"
                       orderBy="name"
                       headLabel={[
+                        { id: 'matchScore', label: 'Match Score' },
                         { id: 'name', label: 'Name' },
                         { id: 'birthdate', label: 'Date of Birth' },
                         { id: 'pob', label: 'Place of Birth' },
@@ -128,30 +132,29 @@ function FraudReport({ open, onClose, verif }) {
                         { id: 'address', label: 'Address' },
                         { id: 'aliases', label: 'Name Aliases' },
                         { id: 'topics', label: 'Topics' },
-                        { id: 'foundIn', label: 'Found In' },
-                        { id: 'matchScore', label: 'Match Score' },
+                        { id: 'references', label: 'References' },
                       ]}
                       onRequestSort={() => {}}
                     />
                     {sanctionsCheck?.results?.length > 0 ? (
                       <TableBody>
-                        {/* {sanctionsCheck?.results?.map((result) => (
+                        {sanctionsCheck?.results?.map((result) => (
                           <FraudReportTableRow
-                            key={result.name}
+                            key={result.caption}
                             properties={{
-                              name: result?.proprietes?.caption || "",
-                              dob: result?.properties?.birthDate|| "",
-                              pob: result?.properties?.birthPlace|| "",
-                              country: result?.properties?.country || "",
-                              address: result.address || "",
+                              name: result?.caption || '',
+                              dob: result?.properties?.birthDate || '',
+                              pob: result?.properties?.birthPlace || ['N/A'],
+                              country: result?.properties?.country || '',
+                              address: result.properties?.address || 'N/A',
                               aliases: result?.properties?.alias || [],
                               topics: result?.properties?.topics || [],
-                              foundIn: result.foundIn || [] ,
-                              matchScore: result?.score,
+                              foundIn: result.referents || [],
+                              matchScore: result?.score * 100,
                             }}
                           />
-                        ))} */}
-                        <FraudReportTableRow
+                        ))}
+                        {/* <FraudReportTableRow
                           properties={{
                             name: 'John',
                             dob: '12/12/2002',
@@ -174,7 +177,7 @@ function FraudReport({ open, onClose, verif }) {
                             matchScore: 60,
                             foundIn: ['OFAC', 'EU'],
                           }}
-                        />
+                        /> */}
                       </TableBody>
                     ) : (
                       <TableCell

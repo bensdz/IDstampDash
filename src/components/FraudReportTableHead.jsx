@@ -15,7 +15,8 @@ export default function FraudReportTableHead({ order, orderBy, headLabel, onRequ
               width: headCell.width,
               minWidth: headCell.minWidth,
               bgcolor: 'background.paper',
-              fontSize: '14px',
+              fontSize: '13px',
+              fontWeight: 'bold',
               lineHeight: '15px',
             }}
           >
