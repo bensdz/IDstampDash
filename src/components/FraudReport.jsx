@@ -20,7 +20,10 @@ import FraudReportTableRow from './FraudReportTableRow';
 
 function FraudReport({ open, onClose, verif }) {
   const [collapseOpen, setCollapseOpen] = useState(false);
-  const sanctionsCheck = JSON.parse(verif.sanctionsCheck);
+  const sanctionsCheck = verif?.sanctionsCheck ? JSON.parse(verif?.sanctionsCheck) : null;
+  const facesHaveAccountBefore = verif?.facesHaveAccountBefore
+    ? JSON.parse(verif?.facesHaveAccountBefore)
+    : null;
   // console.log(sanctionsCheck?.results);
 
   const style = {
@@ -34,7 +37,7 @@ function FraudReport({ open, onClose, verif }) {
     p: 4,
     borderRadius: 1,
     overflowY: 'scroll',
-    height: `${collapseOpen && sanctionsCheck?.results?.length > 0 ? '98%' : '82%'}`,
+    height: `${collapseOpen && sanctionsCheck?.results?.length > 0 ? '98%' : '90%'}`,
     display: 'block',
   };
 
@@ -57,42 +60,54 @@ function FraudReport({ open, onClose, verif }) {
           Fraud Report:
         </Typography>
 
-        <Alert severity={verif?.compareInfo ? 'info' : 'error'} sx={{ my: 2 }}>
+        {/* <Alert severity={verif?.compareInfo ? 'info' : 'error'} sx={{ my: 2 }}>
           {verif?.compareInfo
             ? `Given Information and document Information Matches`
-            : `Given Information and document Information don&apos;t match`}
-        </Alert>
+            : `Given Information and document Information don't match`}
+        </Alert> */}
 
-        <Alert severity={verif?.compareFaces <= 0.7 ? 'error' : 'info'} sx={{ my: 2 }}>
+        <Alert severity={verif?.compareFaces <= 0.7 ? 'error' : 'success'} sx={{ my: 2 }}>
           Face match:
           {verif?.compareFaces === 0
             ? ' No face detected'
             : verif?.compareFaces <= 0.7
               ? ` Failed - ${Math.round(verif?.compareFaces * 10000) / 100}% Expected 70%+`
-              : ` Passed (${Math.round(verif?.compareFaces * 100) / 100}%)`}
+              : ` Passed (${Math.round(verif?.compareFaces * 10000) / 100}%)`}
         </Alert>
 
-        <Alert severity={verif?.mRZValid ? 'info' : 'error'} sx={{ my: 2 }}>
+        <Alert severity={verif?.nbrFacesRejected > 0 ? 'error' : 'success'} sx={{ my: 2 }}>
+          {verif?.nbrFacesRejected > 0
+            ? `Face Rejected ${verif?.nbrFacesRejected} Times By Other Companies`
+            : `Face Not Rejected By Other Companies`}
+        </Alert>
+
+        <Alert severity={facesHaveAccountBefore?.length > 0 ? 'error' : 'success'} sx={{ my: 2 }}>
+          {facesHaveAccountBefore?.length > 0
+            ? `Face Detected in ${facesHaveAccountBefore?.length} Previous Accounts In Your Company`
+            : `Face Not Detected in Previous Accounts In Your Company`}
+        </Alert>
+
+        <Alert severity={verif?.mRZValid ? 'success' : 'error'} sx={{ my: 2 }}>
           {verif?.mRZValid ? `Valid MRZ Code` : `Invalid MRZ code`}
         </Alert>
 
-        <Alert severity={verif?.compareMRZ <= 70 ? 'error' : 'info'} sx={{ my: 2 }}>
+        <Alert severity={verif?.compareMRZ <= 70 ? 'error' : 'success'} sx={{ my: 2 }}>
           MRZ Information Match:
           {verif?.compareMRZ <= 70
             ? ` Doesn't Match (${Math.round(verif?.compareMRZ * 100) / 100}%)`
             : ` Matches (${Math.round(verif?.compareMRZ * 100) / 100}%)`}
         </Alert>
 
-        <Alert severity={verif?.compareAge <= 70 ? 'error' : 'info'} sx={{ my: 2 }}>
+        <Alert severity={verif?.compareAge <= 0.7 ? 'error' : 'success'} sx={{ my: 2 }}>
           Age Match:
-          {verif?.compareAge <= 70
-            ? ` Failed (${Math.round(verif?.compareAge * 10) / 10}% Expected 70%+) \n Age Guessed: ${Math.round(verif?.guessedAge * 10) / 10}`
-            : ` Passed (${Math.round(verif?.compareAge * 100) / 100}%)`}
+          {verif?.compareAge <= 0.7
+            ? ` Failed (${Math.round(verif?.compareAge * 10000) / 100}% Expected 70%+) \n Age Guessed: ${Math.round(verif?.guessedAge * 10) / 10}`
+            : ` Passed (${Math.round(verif?.compareAge * 10000) / 100}%)`}
         </Alert>
 
         <Alert
           // icon={verif?.compareGender !== false}
-          severity={verif?.compareGender === false ? 'error' : 'info'}
+          severity={verif?.compareGender === false ? 'error' : 'success'}
           sx={{ my: 2 }}
         >
           {verif?.compareGender
@@ -103,10 +118,11 @@ function FraudReport({ open, onClose, verif }) {
           <>
             <ListItem button onClick={() => setCollapseOpen(!collapseOpen)} sx={{ p: 0 }}>
               <Alert
-                severity={sanctionsCheck?.results?.length > 0 ? 'error' : 'info'}
+                severity={sanctionsCheck?.results?.length > 0 ? 'error' : 'success'}
                 sx={{ my: 2, width: '100%', cursor: 'pointer', m: 0 }}
               >
-                Sanctions Check: {sanctionsCheck?.results?.length} Matches Found
+                Sanctions Check: {sanctionsCheck?.results?.length} Possible Matches Found (Click to
+                Expand)
                 <Iconify
                   icon={collapseOpen ? 'bi:chevron-up' : 'bi:chevron-down'}
                   width={20}
@@ -145,7 +161,7 @@ function FraudReport({ open, onClose, verif }) {
                               name: result?.caption || '',
                               dob: result?.properties?.birthDate || '',
                               pob: result?.properties?.birthPlace || ['N/A'],
-                              country: result?.properties?.country || '',
+                              country: result?.properties?.country || 'N/A',
                               address: result.properties?.address || 'N/A',
                               aliases: result?.properties?.alias || [],
                               topics: result?.properties?.topics || [],

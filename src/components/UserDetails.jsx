@@ -3,7 +3,6 @@
 import { Typography, Grid } from '@mui/material';
 import PropTypes from 'prop-types';
 import Label from './label';
-import Iconify from './iconify';
 
 function UserDetails({ userinfo, fraudScore, docinfo }) {
   const statusColors = {
@@ -22,10 +21,19 @@ function UserDetails({ userinfo, fraudScore, docinfo }) {
     date.setUTCDate(date.getUTCDate() + 1);
     bday = date.toISOString();
   }
-  // console.log(docinfo);
+
+  // const anchorRef = useRef(null);
+  // const anchorRef1 = useRef(null);
+  // const anchorRef3 = useRef(null);
+
+  // // console.log(docinfo);
   // const [pop1Open, setPop1Open] = useState(false);
   // const [pop2Open, setPop2Open] = useState(false);
   // const [pop3Open, setPop3Open] = useState(false);
+
+  // const debouncedSetPop2Open = debounce(setPop2Open, 300);
+  // const debouncedSetPop1Open = debounce(setPop1Open, 300);
+  // const debouncedSetPop3Open = debounce(setPop3Open, 300);
 
   return (
     <>
@@ -50,48 +58,74 @@ function UserDetails({ userinfo, fraudScore, docinfo }) {
           <Typography variant="body1" component="p">
             First name:
           </Typography>
-          <Typography variant="subtitle1" component="p">
+          <Typography variant="subtitle1">
             {userinfo?.userFirstName}
-            {docinfo?.firstname &&
-              docinfo?.firstname?.toUpperCase().replace(' ', '') !==
-                userinfo?.userFirstName?.toUpperCase().replace(' ', '') && (
+            {/* {docinfo?.firstname?.toUpperCase().replace(' ', '') !==
+              userinfo?.userFirstName?.toUpperCase().replace(' ', '') && (
+              <>
                 <Iconify
+                  ref={anchorRef1}
                   icon="material-symbols:info-outline"
                   color="warning"
                   sx={{
                     ml: 1,
-                    pt: 1.25,
+                    pt: 0,
                     color: '	#bb2124',
-                    height: 25,
-                    width: 25,
+                    height: 15,
+                    width: 15,
                     cursor: 'pointer',
                   }}
+                  onMouseEnter={(e) => debouncedSetPop1Open(true)}
+                  onMouseLeave={(e) => debouncedSetPop1Open(false)}
                 />
-              )}
+                <Popover
+                  open={pop1Open}
+                  anchorEl={anchorRef1.current}
+                  onClose={() => setPop1Open(false)}
+                >
+                  <Typography variant="body2" sx={{ p: 2 }}>
+                    Don&apos;t match with document first name: {docinfo?.firstname}
+                  </Typography>
+                </Popover>
+              </>
+            )} */}
           </Typography>
         </Grid>
         <Grid item xs={4}>
           <Typography variant="body1" component="p">
             Last name:
           </Typography>
-          <Typography variant="subtitle1" component="p">
+          <Typography variant="subtitle1">
             {userinfo?.userLastName}
-            {docinfo?.lastname &&
-              docinfo?.lastname?.toUpperCase().replace(' ', '') !==
-                userinfo?.userLastName?.toUpperCase().replace(' ', '') && (
+            {/* {docinfo?.lastName?.toUpperCase().replace(' ', '') !==
+              userinfo?.userLastName?.toUpperCase().replace(' ', '') && (
+              <>
                 <Iconify
+                  ref={anchorRef}
                   icon="material-symbols:info-outline"
                   color="warning"
                   sx={{
                     ml: 1,
-                    pt: 1.25,
+                    pt: 0,
                     color: '	#bb2124',
-                    height: 25,
-                    width: 25,
+                    height: 15,
+                    width: 15,
                     cursor: 'pointer',
                   }}
+                  onMouseEnter={(e) => debouncedSetPop2Open(true)}
+                  onMouseLeave={(e) => debouncedSetPop2Open(false)}
                 />
-              )}
+                <Popover
+                  open={pop2Open}
+                  anchorEl={anchorRef.current}
+                  onClose={() => setPop2Open(false)}
+                >
+                  <Typography variant="body2" sx={{ p: 2 }}>
+                    Don&apos;t match with document last name: {docinfo?.lastName}
+                  </Typography>
+                </Popover>
+              </>
+            )} */}
           </Typography>
         </Grid>
         <Grid item xs={4}>
@@ -109,39 +143,38 @@ function UserDetails({ userinfo, fraudScore, docinfo }) {
           <Typography variant="body1" component="p">
             Date of Birth:
           </Typography>
-          <Typography variant="subtitle1" component="p">
+          <Typography variant="subtitle1">
             {bday?.substring(0, 10)}
-            {docinfo?.dateOfBirth &&
-              docinfo?.dateOfBirth?.replace(' ', '').substring(0, 10) !==
-                bday?.replace(' ', '').substring(0, 10) && (
-                <>
-                  <Iconify
-                    icon="material-symbols:info-outline"
-                    color="warning"
-                    sx={{
-                      ml: 1,
-                      pt: 1.25,
-                      color: '	#bb2124',
-                      height: 25,
-                      width: 25,
-                      cursor: 'pointer',
-                    }}
-                    // onMouseEnter={(e) => setPop1Open(e.currentTarget)}
-                    // onMouseLeave={() => setPop1Open(null)}
-                  />
-                  {/* <Popover
-                  // open={pop1Open}
-                  // anchorEl={pop1Open}
-                  // onClose={() => setPop1Open(null)}
-                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                  transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            {/* {docinfo?.dateOfBirth?.replace(' ', '').substring(0, 10) !==
+              bday?.replace(' ', '').substring(0, 10) && (
+              <>
+                <Iconify
+                  icon="material-symbols:info-outline"
+                  color="warning"
+                  sx={{
+                    ml: 1,
+                    pt: 0,
+                    color: '	#bb2124',
+                    height: 15,
+                    width: 15,
+                    cursor: 'pointer',
+                  }}
+                  ref={anchorRef3}
+                  onMouseEnter={(e) => debouncedSetPop3Open(true)}
+                  onMouseLeave={(e) => debouncedSetPop3Open(false)}
+                />
+                <Popover
+                  open={pop3Open}
+                  anchorEl={anchorRef3.current}
+                  onClose={() => setPop3Open(false)}
                 >
                   <Typography variant="body2" sx={{ p: 2 }}>
-                    Document DOB: {docinfo?.dateOfBirth}
+                    Date of birth doesn&apos;t match with document date of birth:
+                    {docinfo?.dateOfBirth}
                   </Typography>
-                </Popover> */}
-                </>
-              )}
+                </Popover>
+              </>
+            )} */}
           </Typography>
         </Grid>
 

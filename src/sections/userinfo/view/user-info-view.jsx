@@ -120,7 +120,7 @@ function UserInfo() {
                   fraudScore={latestSubmission?.verif?.fraudIndex}
                   docinfo={{
                     firstname: latestSubmission?.document?.firstname,
-                    lastname: latestSubmission?.document?.lastname,
+                    lastName: latestSubmission?.document?.lastName,
                     dateOfBirth: latestSubmission?.document?.dateOfBirth?.substring(0, 10),
                   }}
                 />

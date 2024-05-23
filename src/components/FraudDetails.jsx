@@ -9,6 +9,10 @@ import FraudReport from './FraudReport';
 
 function FraudDetails({ verif }) {
   const [modalOpen, setModalOpen] = useState(false);
+  const sanctionsCheck = verif?.sanctionsCheck ? JSON.parse(verif?.sanctionsCheck) : null;
+  const facesHaveAccountBefore = verif?.facesHaveAccountBefore
+    ? JSON.parse(verif?.facesHaveAccountBefore)
+    : null;
 
   return (
     <>
@@ -35,12 +39,24 @@ function FraudDetails({ verif }) {
               Face match is below 70%
             </Alert>
           )}
+          {verif?.nbrFacesRejected > 0 && (
+            <Alert severity="error" sx={{ my: 2 }}>
+              Face Rejected {verif?.nbrFacesRejected} Times By Other Companies
+            </Alert>
+          )}
+
+          {facesHaveAccountBefore?.length > 0 && (
+            <Alert severity="error" sx={{ my: 2 }}>
+              Face Detected in {facesHaveAccountBefore?.length} Previous Accounts In Your Company
+            </Alert>
+          )}
+
           {verif?.compareMRZ <= 70 && (
             <Alert severity="error" sx={{ my: 2 }}>
               MRZ information does not match
             </Alert>
           )}
-          {verif?.compareAge <= 70 && (
+          {verif?.compareAge <= 0.7 && (
             <Alert severity="error" sx={{ my: 2 }}>
               Age match is below 70%
             </Alert>
@@ -55,11 +71,17 @@ function FraudDetails({ verif }) {
               Invalid MRZ code
             </Alert>
           )}
-          {!verif?.infoMatch && (
+          {sanctionsCheck?.results?.length > 0 && (
+            <Alert severity="error" sx={{ my: 2 }}>
+              {sanctionsCheck?.results?.length} Possible Sanctions Found
+            </Alert>
+          )}
+
+          {/* {!verif?.infoMatch && (
             <Alert severity="error" sx={{ my: 2 }}>
               Given Information and document Information don&apos;t match
             </Alert>
-          )}
+          )} */}
           <Grid container sx={{ my: 3 }}>
             {/* <Grid item xs={4}>
               <Typography variant="body1" component="p">
