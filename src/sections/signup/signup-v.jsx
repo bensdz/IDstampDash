@@ -47,6 +47,8 @@ export default function SignupView() {
     password: '',
   });
 
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
   // const [addressSuggestions, setAdresseSuggestions] = useState([]);
 
   // const fetchAdresseSuggestions = async (adresse) => {
@@ -67,12 +69,15 @@ export default function SignupView() {
       if (!formState.email || !formState.password || !formState.name || !formState.address) {
         throw new Error('All fields are required');
       }
+      if (!emailRegex.test(formState.email)) {
+        throw new Error('Invalid email address');
+      }
       res = await axios.post(`${baseURL}/companies/new`, formState).catch((err) => {
         if (err.response?.status === 400) throw new Error('Company already exists');
         else if (err.response?.status === 500) throw new Error('Internal Server Error');
         else throw new Error('Unable to login');
       });
-      // console.log(res.data);
+
       const { token, company, role, auth } = res.data;
       if (auth) {
         signIn({

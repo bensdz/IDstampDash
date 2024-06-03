@@ -79,6 +79,8 @@ export default function UserPage() {
     },
   ];
 
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
   const style = {
     position: 'absolute',
     top: '50%',
@@ -151,6 +153,7 @@ export default function UserPage() {
         throw new Error(`Failed to delete user with ID ${userId}`);
       }
       // Refresh the user list after deletion
+      setPage(0);
       fetchUsers();
     } catch (err) {
       console.error('Failed to delete user:', err);
@@ -233,6 +236,11 @@ export default function UserPage() {
       ) {
         throw new Error('Please fill all required fields');
       }
+
+      if (!emailRegex.test(formState.email)) {
+        throw new Error('Invalid email syntax');
+      }
+
       const res = await axios.post(`${baseURL}/users/new`, {
         companyId: compInfo?.company?.companyId,
         token: compInfo?.token,

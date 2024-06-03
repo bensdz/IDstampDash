@@ -14,6 +14,8 @@ function UserInfoEdit({ userid, modalOpen, onModalChange, onCloseFetch }) {
   const authUser = useAuthUser();
   const [response, setResponse] = useState(null);
 
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
   const [formState, setFormState] = useState({
     fname: response?.fname || '',
     lname: response?.lname || '',
@@ -62,6 +64,9 @@ function UserInfoEdit({ userid, modalOpen, onModalChange, onCloseFetch }) {
         !formState.email
       ) {
         throw new Error('All fields are required');
+      }
+      if (!emailRegex.test(formState.email)) {
+        throw new Error('Invalid email address');
       }
       setIsLoading(true);
       await axios.put(`${baseURL}/users/${userid}`, {

@@ -22,6 +22,9 @@ function CompanyInfoEdit({ company, modalOpen, onModalChange }) {
     passportRequired: company?.passportRequired ? company?.passportRequired : true,
     idRequired: company?.idRequired ? company?.idRequired : true,
   });
+
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
   const [docsRequired, setDocsRequired] = useState(
     [
       formState?.dlRequired ? 'DL' : null,
@@ -63,6 +66,10 @@ function CompanyInfoEdit({ company, modalOpen, onModalChange }) {
         docsRequired.length === 0
       ) {
         throw new Error('All fields are required');
+      }
+
+      if (!emailRegex.test(formState.companyEmail)) {
+        throw new Error('Invalid email syntax');
       }
       setIsLoading(true);
       const response = await axios.put(`${baseURL}/companies/${company.companyId}`, {
