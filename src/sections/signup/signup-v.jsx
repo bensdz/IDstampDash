@@ -47,9 +47,26 @@ export default function SignupView() {
     password: '',
   });
 
+  // const [addressSuggestions, setAdresseSuggestions] = useState([]);
+
+  // const fetchAdresseSuggestions = async (adresse) => {
+  //   try {
+  //     const response = await axios.get(
+  //       `https://nominatim.openstreetmap.org/search?q=${formState.address}&format=json`
+  //     );
+  //     setAdresseSuggestions(response.data);
+  //   } catch (err) {
+  //     console.error("Erreur lors de la récupération des suggestions d'adresse :", err);
+  //   }
+  // };
+  // console.log(addressSuggestions);
+
   const handleSubmit = async () => {
     let res;
     try {
+      if (!formState.email || !formState.password || !formState.name || !formState.address) {
+        throw new Error('All fields are required');
+      }
       res = await axios.post(`${baseURL}/companies/new`, formState).catch((err) => {
         if (err.response?.status === 400) throw new Error('Company already exists');
         else if (err.response?.status === 500) throw new Error('Internal Server Error');
@@ -91,7 +108,10 @@ export default function SignupView() {
           name="address"
           label="Address"
           value={formState.address}
-          onChange={(e) => setFormState({ ...formState, address: e.target.value })}
+          onChange={(e) => {
+            // fetchAdresseSuggestions(formState.address);
+            setFormState({ ...formState, address: e.target.value });
+          }}
         />
 
         <TextField

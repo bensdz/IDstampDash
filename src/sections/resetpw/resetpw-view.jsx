@@ -67,6 +67,9 @@ export default function ResetPwView() {
 
   const handleSubmit = async () => {
     try {
+      if (!formState.pw || !formState.pw2) {
+        throw new Error('All fields are required');
+      }
       await axios
         .post(`${baseURL}/companies/reset/change`, {
           email,

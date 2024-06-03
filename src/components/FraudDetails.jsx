@@ -31,7 +31,7 @@ function FraudDetails({ verif }) {
             }}
             textColor="#00000"
             nrOfLevels={3}
-            arcsLength={[0.25, 0.25, 0.5]}
+            arcsLength={[0.3, 0.3, 0.4]}
             colors={['#50C878', '#ff9f00', '#cf352e']}
           />
           {verif?.compareFaces <= 0.7 && (
@@ -73,7 +73,7 @@ function FraudDetails({ verif }) {
           )}
           {sanctionsCheck?.results?.length > 0 && (
             <Alert severity="error" sx={{ my: 2 }}>
-              {sanctionsCheck?.results?.length} Possible Sanctions Found
+              {sanctionsCheck?.results?.length} Possible Sanctions Match Found
             </Alert>
           )}
 

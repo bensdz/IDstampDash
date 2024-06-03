@@ -221,7 +221,18 @@ export default function UserPage() {
       role: compInfo?.role,
       ...formState,
     }); */
+
     try {
+      setError(null);
+      if (
+        !formState.fname ||
+        !formState.lname ||
+        !formState.email ||
+        !formState.dob ||
+        !formState.gender
+      ) {
+        throw new Error('Please fill all required fields');
+      }
       const res = await axios.post(`${baseURL}/users/new`, {
         companyId: compInfo?.company?.companyId,
         token: compInfo?.token,
@@ -231,7 +242,7 @@ export default function UserPage() {
       setResponse(res.data);
     } catch (err) {
       setResponse(null);
-      setError(err.response?.data.message);
+      setError(err.message || 'An error occurred');
       console.log(err);
     }
   };
@@ -263,6 +274,16 @@ export default function UserPage() {
           open={modalOpen && compInfo?.role !== 'admin'}
           onClose={() => {
             setModalOpen(false);
+            setFormState({
+              fname: '',
+              lname: '',
+              gender: 'M',
+              dob: '01-01-2000',
+              email: '',
+            });
+            setError(null);
+            setResponse(null);
+
             fetchUsers();
           }}
           aria-labelledby="simple-modal-title"

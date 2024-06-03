@@ -18,6 +18,7 @@ function EnterEmail() {
 
   const handleSubmit = async () => {
     try {
+      if (!email) throw new Error('Email is required');
       await axios.post(`${baseURL}/companies/reset`, { email }).catch((err) => {
         if (err.response?.status === 500) throw new Error('Internal Server Error');
         else throw new Error('Unable to send email');

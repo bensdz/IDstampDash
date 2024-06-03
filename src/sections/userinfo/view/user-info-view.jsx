@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable perfectionist/sort-imports */
 /* eslint-disable import/no-extraneous-dependencies */
 
@@ -35,6 +36,7 @@ function UserInfo() {
 
   const [info, setInfo] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const userid = useParams()?.id;
   const comp = useAuthUser();
@@ -66,8 +68,10 @@ function UserInfo() {
       .then((res) => {
         setInfo(res.data);
         setIsLoading(false);
+        setError(null);
       })
       .catch((err) => {
+        setError(err);
         console.log(err);
         setIsLoading(false);
       });
@@ -107,7 +111,13 @@ function UserInfo() {
         <Button onClick={() => router.back()}>⬅ Back</Button>{' '}
       </Box>
       <Card>
-        {isLoading ? (
+        {error ? (
+          <Box display="flex" justifyContent="center" alignItems="center" minHeight="75vh">
+            <Typography variant="h4" sx={{ my: 2 }}>
+              404: User not found
+            </Typography>
+          </Box>
+        ) : isLoading ? (
           <Box display="flex" justifyContent="center" alignItems="center" minHeight="75vh">
             <CircularProgress color="inherit" />
           </Box>

@@ -39,6 +39,7 @@ export default function LoginView() {
   const handleSignIn = async () => {
     let res;
     try {
+      if (!email || !password) throw new Error('All fields are required');
       res = await axios.post(`${baseURL}/companies/login`, { email, password }).catch((err) => {
         if (err.response?.status === 400) throw new Error('Wrong Email or Password');
         else if (err.response?.status === 500) throw new Error('Internal Server Error');

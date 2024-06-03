@@ -53,6 +53,16 @@ function UserInfoEdit({ userid, modalOpen, onModalChange, onCloseFetch }) {
 
   const handleUpdate = async () => {
     try {
+      setError(null);
+      if (
+        !formState.fname ||
+        !formState.lname ||
+        !formState.dob ||
+        !formState.gender ||
+        !formState.email
+      ) {
+        throw new Error('All fields are required');
+      }
       setIsLoading(true);
       await axios.put(`${baseURL}/users/${userid}`, {
         token: authUser?.token,
@@ -68,7 +78,7 @@ function UserInfoEdit({ userid, modalOpen, onModalChange, onCloseFetch }) {
       setSuccess(true);
     } catch (err) {
       setIsLoading(false);
-      setError(err.res?.data?.message || 'An error occurred');
+      setError(err.message || 'An error occurred');
       console.error(err);
     }
   };
@@ -201,11 +211,11 @@ function UserInfoEdit({ userid, modalOpen, onModalChange, onCloseFetch }) {
             {error}
           </Alert>
         ) : null}
-        {response ? (
+        {success && (
           <Alert severity="success" sx={{ mt: 2 }}>
-            User Successfully Added Unique Registration Code: <b>{response.urc}</b>
+            User Informations Successfully Edited
           </Alert>
-        ) : null}
+        )}
       </Box>
     </Modal>
   );

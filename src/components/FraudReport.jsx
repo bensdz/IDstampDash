@@ -68,10 +68,10 @@ function FraudReport({ open, onClose, verif }) {
 
         <Alert severity={verif?.compareFaces <= 0.7 ? 'error' : 'success'} sx={{ my: 2 }}>
           Face match:
-          {verif?.compareFaces === 0
-            ? ' No face detected'
+          {verif?.compareFaces === -1
+            ? ' No Face Detected'
             : verif?.compareFaces <= 0.7
-              ? ` Failed - ${Math.round(verif?.compareFaces * 10000) / 100}% Expected 70%+`
+              ? ` Failed ${Math.round(verif?.compareFaces * 10000) / 100}% Expected 70%+`
               : ` Passed (${Math.round(verif?.compareFaces * 10000) / 100}%)`}
         </Alert>
 
@@ -82,9 +82,21 @@ function FraudReport({ open, onClose, verif }) {
         </Alert>
 
         <Alert severity={facesHaveAccountBefore?.length > 0 ? 'error' : 'success'} sx={{ my: 2 }}>
-          {facesHaveAccountBefore?.length > 0
-            ? `Face Detected in ${facesHaveAccountBefore?.length} Previous Accounts In Your Company`
-            : `Face Not Detected in Previous Accounts In Your Company`}
+          {facesHaveAccountBefore?.length > 0 ? (
+            <>
+              Face Detected in {facesHaveAccountBefore?.length} Previous Accounts In Your Company,
+              User IDs:{' '}
+              {facesHaveAccountBefore?.map((id) => (
+                <b>
+                  <a key={id} href={`/users/${id}`}>
+                    {id},
+                  </a>
+                </b>
+              ))}
+            </>
+          ) : (
+            `Face Not Detected in Previous Accounts In Your Company`
+          )}
         </Alert>
 
         <Alert severity={verif?.mRZValid ? 'success' : 'error'} sx={{ my: 2 }}>
@@ -114,63 +126,62 @@ function FraudReport({ open, onClose, verif }) {
             ? `Gender Matches`
             : `Gender Guessed Doesn't Match With Document Gender`}
         </Alert>
-        {sanctionsCheck?.results && (
-          <>
-            <ListItem button onClick={() => setCollapseOpen(!collapseOpen)} sx={{ p: 0 }}>
-              <Alert
-                severity={sanctionsCheck?.results?.length > 0 ? 'error' : 'success'}
-                sx={{ my: 2, width: '100%', cursor: 'pointer', m: 0 }}
-              >
-                Sanctions Check: {sanctionsCheck?.results?.length} Possible Matches Found (Click to
-                Expand)
-                <Iconify
-                  icon={collapseOpen ? 'bi:chevron-up' : 'bi:chevron-down'}
-                  width={20}
-                  height={20}
-                  sx={{ ml: 1, aligncontent: 'end', float: 'right', cursor: 'pointer' }}
-                />
-              </Alert>
-            </ListItem>
 
-            <Collapse in={collapseOpen} timeout="auto" unmountOnExit sx={{}}>
-              <Box sx={{ p: 1 }} component="div" overflow="auto">
-                <TableContainer sx={{ overflow: 'unset' }}>
-                  <Table>
-                    <FraudReportTableHead
-                      order="asc"
-                      orderBy="name"
-                      headLabel={[
-                        { id: 'matchScore', label: 'Match Score' },
-                        { id: 'name', label: 'Name' },
-                        { id: 'birthdate', label: 'Date of Birth' },
-                        { id: 'pob', label: 'Place of Birth' },
-                        { id: 'country', label: 'Country' },
-                        { id: 'address', label: 'Address' },
-                        { id: 'aliases', label: 'Name Aliases' },
-                        { id: 'topics', label: 'Topics' },
-                        { id: 'references', label: 'References' },
-                      ]}
-                      onRequestSort={() => {}}
-                    />
-                    {sanctionsCheck?.results?.length > 0 ? (
-                      <TableBody>
-                        {sanctionsCheck?.results?.map((result) => (
-                          <FraudReportTableRow
-                            key={result.caption}
-                            properties={{
-                              name: result?.caption || '',
-                              dob: result?.properties?.birthDate || '',
-                              pob: result?.properties?.birthPlace || ['N/A'],
-                              country: result?.properties?.country || 'N/A',
-                              address: result.properties?.address || 'N/A',
-                              aliases: result?.properties?.alias || [],
-                              topics: result?.properties?.topics || [],
-                              foundIn: result.referents || [],
-                              matchScore: result?.score * 100,
-                            }}
-                          />
-                        ))}
-                        {/* <FraudReportTableRow
+        <ListItem button onClick={() => setCollapseOpen(!collapseOpen)} sx={{ p: 0 }}>
+          <Alert
+            severity={sanctionsCheck?.results?.length > 0 ? 'error' : 'success'}
+            sx={{ my: 2, width: '100%', cursor: 'pointer', m: 0 }}
+          >
+            Sanctions Check: {sanctionsCheck?.results?.length} Possible Matches Found (Click to
+            Expand)
+            <Iconify
+              icon={collapseOpen ? 'bi:chevron-up' : 'bi:chevron-down'}
+              width={20}
+              height={20}
+              sx={{ ml: 1, aligncontent: 'end', float: 'right', cursor: 'pointer' }}
+            />
+          </Alert>
+        </ListItem>
+
+        <Collapse in={collapseOpen} timeout="auto" unmountOnExit sx={{}}>
+          <Box sx={{ p: 1 }} component="div" overflow="auto">
+            <TableContainer sx={{ overflow: 'unset' }}>
+              <Table>
+                <FraudReportTableHead
+                  order="asc"
+                  orderBy="name"
+                  headLabel={[
+                    { id: 'matchScore', label: 'Match Score' },
+                    { id: 'name', label: 'Name' },
+                    { id: 'birthdate', label: 'Date of Birth' },
+                    { id: 'pob', label: 'Place of Birth' },
+                    { id: 'country', label: 'Country' },
+                    { id: 'address', label: 'Address' },
+                    { id: 'aliases', label: 'Name Aliases' },
+                    { id: 'topics', label: 'Topics' },
+                    { id: 'references', label: 'References' },
+                  ]}
+                  onRequestSort={() => {}}
+                />
+                {sanctionsCheck?.results?.length > 0 ? (
+                  <TableBody>
+                    {sanctionsCheck?.results?.map((result) => (
+                      <FraudReportTableRow
+                        key={result.caption}
+                        properties={{
+                          name: result?.caption || '',
+                          dob: result?.properties?.birthDate || '',
+                          pob: result?.properties?.birthPlace || ['N/A'],
+                          country: result?.properties?.country || 'N/A',
+                          address: result.properties?.address || 'N/A',
+                          aliases: result?.properties?.alias || [],
+                          topics: result?.properties?.topics || [],
+                          foundIn: result.referents || [],
+                          matchScore: result?.score * 100,
+                        }}
+                      />
+                    ))}
+                    {/* <FraudReportTableRow
                           properties={{
                             name: 'John',
                             dob: '12/12/2002',
@@ -194,22 +205,20 @@ function FraudReport({ open, onClose, verif }) {
                             foundIn: ['OFAC', 'EU'],
                           }}
                         /> */}
-                      </TableBody>
-                    ) : (
-                      <TableCell
-                        variant="body2"
-                        style={{ textAlign: 'center', marginTop: '2rem' }}
-                        colSpan={8}
-                      >
-                        No Matches Found
-                      </TableCell>
-                    )}
-                  </Table>
-                </TableContainer>
-              </Box>
-            </Collapse>
-          </>
-        )}
+                  </TableBody>
+                ) : (
+                  <TableCell
+                    variant="body2"
+                    style={{ textAlign: 'center', marginTop: '2rem' }}
+                    colSpan={8}
+                  >
+                    No Matches Found
+                  </TableCell>
+                )}
+              </Table>
+            </TableContainer>
+          </Box>
+        </Collapse>
       </Box>
     </Modal>
   );

@@ -42,10 +42,10 @@ function UserDetails({ userinfo, fraudScore, docinfo }) {
       </Label>
       {fraudScore && (
         <Label
-          color={fraudScore > 0.8 ? 'error' : fraudScore > 0.3 ? 'warning' : 'info'}
+          color={fraudScore > 0.6 ? 'error' : fraudScore > 0.3 ? 'warning' : 'info'}
           sx={{ my: 2, mx: 1 }}
         >
-          {fraudScore >= 0.7
+          {fraudScore > 0.6
             ? 'High Risk User'
             : fraudScore > 0.3
               ? 'Medium Risk User'

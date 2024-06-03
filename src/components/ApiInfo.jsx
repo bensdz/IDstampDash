@@ -1,3 +1,4 @@
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Modal, TextField, Typography, Box, InputAdornment, IconButton } from '@mui/material';
@@ -7,6 +8,7 @@ import Iconify from './iconify';
 
 function ApiInfo({ modal, onModalChange, api, apikey }) {
   const [showKey, setShowKey] = useState(false);
+  const authUser = useAuthUser();
 
   const style = {
     position: 'absolute',
@@ -48,7 +50,8 @@ function ApiInfo({ modal, onModalChange, api, apikey }) {
 
         <Typography variant="body2" gutterBottom sx={{ textAlign: 'center' }}>
           Use the following APIs to integrate with your system. Read the documentation for more
-          information. <NavLink to="/docs">Documentation</NavLink>
+          information. <NavLink to="/docs">Documentation</NavLink>. Here is your company ID:{' '}
+          <b>{authUser?.company?.companyId}</b>
         </Typography>
 
         <TextField
@@ -99,7 +102,6 @@ function ApiInfo({ modal, onModalChange, api, apikey }) {
           sx={{ mt: 3 }}
           value={api[4]}
         />
-
         <TextField
           id="outlined-basic"
           name="apikey"

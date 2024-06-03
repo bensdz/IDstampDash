@@ -52,6 +52,18 @@ function CompanyInfoEdit({ company, modalOpen, onModalChange }) {
 
   const handleUpdate = async () => {
     try {
+      setError(null);
+      setSuccess(false);
+      if (
+        !formState.companyName ||
+        !formState.companyEmail ||
+        !formState.companyAddress ||
+        !formState.companyWillaya ||
+        !formState.companyCommune ||
+        docsRequired.length === 0
+      ) {
+        throw new Error('All fields are required');
+      }
       setIsLoading(true);
       const response = await axios.put(`${baseURL}/companies/${company.companyId}`, {
         token: authUser?.token,
@@ -83,7 +95,7 @@ function CompanyInfoEdit({ company, modalOpen, onModalChange }) {
       setSuccess(true);
     } catch (err) {
       setIsLoading(false);
-      setError(err.response?.data?.message || 'An error occurred');
+      setError(err.message);
       console.error(err);
     }
   };
