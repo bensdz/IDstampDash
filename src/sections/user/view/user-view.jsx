@@ -419,6 +419,7 @@ export default function UserPage() {
                 />
 
                 <TableBody>
+                  {dataFiltered.length === 0 && filterName === '' && <TableNoData colSpan={6} />}
                   {dataFiltered
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => (
