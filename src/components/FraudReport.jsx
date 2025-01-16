@@ -68,11 +68,9 @@ function FraudReport({ open, onClose, verif }) {
 
         <Alert severity={verif?.compareFaces <= 0.7 ? 'error' : 'success'} sx={{ my: 2 }}>
           Face match:
-          {verif?.compareFaces === -1
-            ? ' No Face Detected'
-            : verif?.compareFaces <= 0.7
-              ? ` Failed ${Math.round(verif?.compareFaces * 10000) / 100}% Expected 70%+`
-              : ` Passed (${Math.round(verif?.compareFaces * 10000) / 100}%)`}
+          {verif?.compareFaces <= 0.7
+            ? ` Failed ${verif?.compareFaces === -1 ? '0' : Math.round(verif?.compareFaces * 10000) / 100}% Expected 70%+`
+            : ` Passed (${Math.round(verif?.compareFaces * 10000) / 100}%)`}
         </Alert>
 
         <Alert severity={verif?.nbrFacesRejected > 0 ? 'error' : 'success'} sx={{ my: 2 }}>
@@ -85,7 +83,7 @@ function FraudReport({ open, onClose, verif }) {
           {facesHaveAccountBefore?.length > 0 ? (
             <>
               Face Detected in {facesHaveAccountBefore?.length} Previous Accounts In Your Company,
-              User IDs:{' '}
+              User IDs:
               {facesHaveAccountBefore?.map((id) => (
                 <b>
                   <a key={id} href={`/users/${id}`}>
