@@ -1,46 +1,140 @@
-## Minimal [(Free version)](https://minimal-kit-react.vercel.app/)
+# IDstamp
+<img src="https://i.imghippo.com/files/yxu1843.png" alt="" border="0" width="700px" align="center">
+IDstamp is an intelligent identity verification system designed to facilitate secure, automated, and efficient client identity checks for businesses. Leveraging advanced technologies like facial recognition, Optical Character Recognition (OCR), and APIs, the platform enables companies to streamline verification processes while enhancing security and user experience.
 
-![license](https://img.shields.io/badge/license-MIT-blue.svg)
+This GitHub repository contains only the website dashboard of the project that has 3 parts (mobile, website dashboard, backend)
 
-> Free React Admin Dashboard made with Material-UI components and React.
+## Table of Contents
 
-![preview](public/assets/preview.jpg)
+- [Introduction](#introduction)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Technologies Used](#technologies-used)
+- [Architecture](#architecture)
+- [Contributing](#contributing)
+- [License](#license)
 
-## Demo
+## Introduction
 
-- [Dashboard Page](https://minimal-kit-react.vercel.app/)
-- [Users Page](https://minimal-kit-react.vercel.app/user)
-- [Products Page](https://minimal-kit-react.vercel.app/products)
-- [Blog Page](https://minimal-kit-react.vercel.app/blog)
-- [Login Page](https://minimal-kit-react.vercel.app/login)
-- [Not Found Page](https://minimal-kit-react.vercel.app/404)
+IDstamp addresses the growing need for robust identity verification in an increasingly digital world. The platform automates identity checks to reduce errors, improve operational efficiency, and bolster trust between businesses and clients.
 
-## Quick start
+### Key Objectives:
 
-- [Download from Github](https://github.com/minimal-ui-kit/material-kit-react/archive/refs/heads/main.zip) or clone the repo : `git clone https://github.com/minimal-ui-kit/material-kit-react.git`
-- Recommended `Node.js v18.x`.
-- **Install:** `yarn install`
-- **Start:** `yarn dev`
-- **Build:** `yarn build`
+- Automate identity verification processes.
+- Enhance data security and user privacy.
+- Integrate seamlessly with business workflows via APIs.
+- Support international compliance standards.
 
-## Upgrade to PRO Version
+## Features
 
-| Minimal Free     | [Minimal Pro](https://material-ui.com/store/items/minimal-dashboard/) |
-| :--------------- | :-------------------------------------------------------------------- |
-| **6** Demo Pages | **70+** Demo Pages                                                    |
-| -                | Authentication with **Amplify**, **Auth0**, **JWT** and **Firebase**  |
-| -                | [+More components](https://minimals.cc/components)                    |
-| -                | Dark & light mode                                                     |
-| -                | Next.js version                                                       |
-| -                | TypeScript version (Standard Plus and Extended license)               |
-| -                | Design Figma File (Standard Plus and Extended license)                |
-| -                | Complete Users Flows                                                  |
-| -                | Learn more: [Package & License](https://docs.minimals.cc/package)     |
+### User Features:
+
+- Document and facial data submission.
+- Real-time status updates for identity verification.
+- Self-correction of extracted document data.
+
+### Business Features:
+
+- Client management (add, update, delete clients).
+- Identity verification via advanced AI.
+- API endpoints for seamless integration.
+- Comprehensive reporting and analytics.
+
+### Admin Features:
+
+- Oversight of businesses and client data.
+- Detailed statistics and audit logs.
+- Advanced user and business management tools.
+
+## Installation
+
+### Clone the Repository:
+
+```bash
+git clone <repository-url>
+```
+
+### Install Dependencies:
+
+```bash
+npm install
+```
+
+### Configure the Database:
+
+Set up the MySQL database using the schema provided.
+
+### Run the Application:
+
+```bash
+npm start
+```
+
+## Usage
+
+- Use the web dashboard to manage clients, review verification statuses, and access analytics.
+- Provide clients with a mobile app to submit identity data securely.
+- Leverage API integrations for real-time data synchronization.
+
+## Technologies Used
+
+### Languages:
+
+- JavaScript: For backend and frontend development.
+- Dart: For mobile app development.
+- SQL: For database management.
+
+### Frameworks and Libraries:
+
+- Express.js: Backend web application framework.
+- Flutter: Mobile app development framework.
+- React: Frontend library for web dashboard.
+- Prisma: ORM for database management.
+- Material-UI: UI components for the web interface.
+- Nodemailer: For email communication.
+- Socket.IO: Real-time client-server communication.
+
+### Cloud Services:
+
+- Microsoft Azure AI Vision: OCR for document scanning.
+- Amazon Rekognition: Facial recognition services.
+- Aiven: Cloud-hosted MySQL for data synchronization.
+- OpenSanctions: Database for sanction checks.
+
+## Architecture
+
+The system follows a three-tier architecture:
+
+1. **Presentation Layer**: Mobile app and web dashboard for user interaction.
+2. **Business Logic Layer**: Handles identity verification processes, data management, and API interactions.
+3. **Data Layer**: MySQL database for secure data storage and retrieval.
+
+## Contributing
+
+Contributions are welcome! To contribute:
+
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix:
+
+   ```bash
+   git checkout -b feature-name
+   ```
+
+3. Commit your changes:
+
+   ```bash
+   git commit -m "Description of changes"
+   ```
+
+4. Push to the branch:
+
+   ```bash
+   git push origin feature-name
+   ```
+
+5. Create a pull request on GitHub.
 
 ## License
 
-Distributed under the MIT License. See [LICENSE](https://github.com/minimal-ui-kit/minimal.free/blob/main/LICENSE.md) for more information.
-
-## Contact us
-
-Email: support@minimals.cc
+This project is licensed under the MIT License. See the LICENSE file for more details.
